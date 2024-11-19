@@ -6,7 +6,7 @@ g = 1.0;           % u    = g  at x = 1
 h = 0.0;           % -u,x = h  at x = 0
 
 % Setup the mesh
-pp   = 2;              % polynomial degree
+pp   = 1;              % polynomial degree
 n_en = pp + 1;         % number of element or local nodes
 n_el = 4;              % number of elements
 n_np = n_el * pp + 1;  % number of nodal points
@@ -88,10 +88,31 @@ d_temp = K \ F;
 disp = [d_temp; g];
 
 
+%% 
 
-
-
-
+% X = 0 : hh : 1;
+% uu = zeros(size(X));
+% Xi = 2*(mod(X,hh)/hh) - 1;
+% 
+% for xx = 1 : length(X)
+%     for aa = 1 : n_en
+%         p_temp = ceil(X(xx)/hh);
+%         if p_temp < 1
+%             ee = 1;
+%         else
+%             ee = ceil(X(xx)/hh);
+%         end
+% 
+%         % syms xii
+%         % x_xii = x_coor(IEN(ee,aa))*PolyShape(pp,aa,xii,0);
+%         % xii_x = finverse(x_xii,xii);
+% 
+%         uu(xx) = uu(xx) + disp(IEN(ee,aa)) * PolyShape(pp,aa,Xi(xx),0);
+%     end
+% end
+% 
+% 
+% plot(X,uu);
 
 
 
