@@ -9,6 +9,7 @@ g = 1.0;           % u    = g  at x = 1
 h = 0.0;           % -u,x = h  at x = 0
 u = @(x) x.^5;      % test solve
 u_x = @(x) 5*x.^4;
+
 % Setup the mesh
 pp   = 1;              % polynomial degree
 n_en = pp + 1;         % number of element or local nodes
@@ -17,80 +18,13 @@ n_np = n_el * pp + 1;  % number of nodal points
 n_eq = n_np - 1;       % number of equations
 n_int = 10;
 
-hh = 1.0 / (n_np - 1); % space between two adjacent nodes
-x_coor = 0 : hh : 1;   % nodal coordinates for equally spaced nodes
+% hh = 1.0 / (n_np - 1); % space between two adjacent nodes
+% x_coor = 0 : hh : 1;   % nodal coordinates for equally spaced nodes
 
-IEN = zeros(n_el, n_en);
+%set up ID&IEN array, and also element space and nodal coordinates for equally spaced nodes
+[ID,IEN,hh,x_coor] = GenerateMesh(n_el,n_en);
 
-for ee = 1 : n_el
-  for aa = 1 : n_en
-    IEN(ee, aa) = (ee - 1) * pp + aa;
-  end
-end
-
-% Setup the ID array for the problem
-ID = 1 : n_np;
-ID(end) = 0;
-
-% Setup the quadrature rule
-[xi, weight] = Gauss(n_int, -1, 1);
-
-% allocate the stiffness matrix
-K = zeros(n_eq, n_eq);
-F = zeros(n_eq, 1);
-
-for ee = 1 : n_el
-  
-  k_ele = zeros(n_en, n_en); % allocate a zero element stiffness matrix
-  f_ele = zeros(n_en, 1);    % allocate a zero element load vector
-
-  x_ele = x_coor(IEN(ee,:));
-
-  for qua = 1 : n_int
-    
-    dx_dxi = 0.0;
-    x_l = 0.0;
-    for aa = 1 : n_en
-      x_l = x_l + x_ele(aa) * PolyShape(pp, aa, xi(qua), 0);
-      dx_dxi = dx_dxi + x_ele(aa) * PolyShape(pp, aa, xi(qua), 1);
-    end
-    dxi_dx = 1.0 / dx_dxi;
-
-    for aa = 1 : n_en
-      f_ele(aa) = f_ele(aa) + weight(qua) * PolyShape(pp, aa, xi(qua), 0) * f(x_l) * dx_dxi;
-      for bb = 1 : n_en
-        k_ele(aa, bb) = k_ele(aa, bb) + weight(qua) * PolyShape(pp, aa, xi(qua), 1) * PolyShape(pp, bb, xi(qua), 1) * dxi_dx;
-      end
-    end
-  end
- 
-  % check the ID(IEN(ee, aa)) and ID(IEN(ee,bb)), if they are positive
-  % put the element stiffness matrix into K
-  for aa = 1 : n_en
-    P = ID(IEN(ee,aa));
-    if(P > 0)
-      F(P) = F(P) + f_ele(aa);
-      for bb = 1 : n_en
-        Q = ID(IEN(ee,bb));
-        if(Q > 0)
-          K(P, Q) = K(P, Q) + k_ele(aa, bb);
-        else
-          F(P) = F(P) - k_ele(aa, bb) * g; % handles the Dirichlet boundary data
-        end
-      end
-    end
-  end
-
-  if ee == 1
-    F(ID(IEN(ee,1))) = F(ID(IEN(ee,1))) + h;
-  end
-end
-
-% Solve Kd = F equation
-d_temp = K \ F;
-
-disp = [d_temp; g];
-
+disp = FEM(n_el,n_en,h,g,n_int,x_coor,ID,IEN,f);
 
 
 %%
@@ -98,7 +32,7 @@ disp = [d_temp; g];
 % maybe a stupid way that make a large array just call it IP array, about the same as IEN array
 % IP array is mainly the find every point of uu from partial coor to total coor
 
-tt = 3;                                 %divide the points in each partial element
+tt = 4;                                 %divide the points in each partial element
 ipn = 1 : 1/tt : n_en;                  %make each points a mark
 
 dd = (tt - 1)*(n_en - 1) + n_en;        %in order to make IP easy
@@ -143,53 +77,24 @@ plot(x_xii,u(x_xii),'k');
 %%
 % error
 
-% the 0-dim error (u_h - u)
-% u_h = uu;
-% u   = x_xii.^5;
-% 
-% e_L2_up   = sqrt(sum(x_xii.*(u_h - u)));
-% e_L2_down = sqrt(sum(x_xii.*u.^2));
-
-%e_L2
-e_L2_up   = 0;
-e_L2_dowm = 0;
-for ee = 1 : n_el
-    for qua = 1 : n_int
-        u_h = 0;
-        x_l = 0;
-        x_ele = x_coor(IEN(ee,:));
-        for aa = 1 : n_en
-            u_h = u_h + disp(IEN(ee,aa)) * PolyShape(pp,aa,xi(qua),0);
-            x_l = x_l + x_ele(aa) * PolyShape(pp,aa,xi(qua),0);
-        end
-        e_L2_up = e_L2_up + weight(qua) * (u_h - u(x_l))^2;
-        e_L2_dowm = e_L2_dowm + weight(qua) * u(x_l)^2;
-    end
-end
-e_L2_up = sqrt(e_L2_up);
-e_L2_dowm = sqrt(e_L2_dowm);
-e_L2 = e_L2_up/e_L2_dowm;
+[e_L2,e_H1] = Error(n_el,n_en,IEN,disp,n_int,u,u_x);
 
 
-%e_H1
-e_H1_up   = 0;
-e_H1_dowm = 0;
-for ee = 1 : n_el
-    for qua = 1 : n_int
-        u_h_x = 0;
-        x_l   = 0;
-        x_ele = x_coor(IEN(ee,:));
-        for aa = 1 : n_en
-            u_h_x = u_h_x + disp(IEN(ee,aa)) * PolyShape(pp,aa,xi(qua),1);
-            x_l = x_l + x_ele(aa) * PolyShape(pp,aa,xi(qua),0);
-        end
-        e_H1_up = e_H1_up + weight(qua) * (u_h_x - u_x(x_l))^2;
-        e_H1_dowm = e_H1_dowm + weight(qua) * u_x(x_l)^2;
-    end
-end
-e_H1_up = sqrt(e_H1_up);
-e_H1_dowm = sqrt(e_H1_dowm);
-e_H1 = e_H1_up/e_H1_dowm;
+
+
+
+%%
+
+
+
+
+
+
+
+
+
+
+
 
 
 % EOF
