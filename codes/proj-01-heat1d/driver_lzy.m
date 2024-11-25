@@ -1,9 +1,13 @@
-clear all; clc; % clean the memory and screen
+% clean the memory and screen
+clear; 
+clc; 
+
 
 % Define the external source or force and boundary data
 f = @(x) -20*x.^3; % f(x) = x
 g = 1.0;           % u    = g  at x = 1
 h = 0.0;           % -u,x = h  at x = 0
+u = @(x) x.^5;      % test solve
 
 % Setup the mesh
 pp   = 1;              % polynomial degree
@@ -88,38 +92,13 @@ d_temp = K \ F;
 disp = [d_temp; g];
 
 
-%% 
-
-% X = 0 : hh : 1;
-% uu = zeros(size(X));
-% Xi = 2*(mod(X,hh)/hh) - 1;
-% 
-% for xx = 1 : length(X)
-%     for aa = 1 : n_en
-%         p_temp = ceil(X(xx)/hh);
-%         if p_temp < 1
-%             ee = 1;
-%         else
-%             ee = ceil(X(xx)/hh);
-%         end
-% 
-%         % syms xii
-%         % x_xii = x_coor(IEN(ee,aa))*PolyShape(pp,aa,xii,0);
-%         % xii_x = finverse(x_xii,xii);
-% 
-%         uu(xx) = uu(xx) + disp(IEN(ee,aa)) * PolyShape(pp,aa,Xi(xx),0);
-%     end
-% end
-% 
-% 
-% plot(X,uu);
 
 %%
 
 % maybe a stupid way that make a large array just call it IP array, about the same as IEN array
 % IP array is mainly the find every point of uu from partial coor to total coor
 
-tt = 5;                                 %divide the points in each partial element
+tt = 3;                                 %divide the points in each partial element
 ipn = 1 : 1/tt : n_en;                  %make each points a mark
 
 dd = (tt - 1)*(n_en - 1) + n_en;        %in order to make IP easy
@@ -157,13 +136,48 @@ end
 figure(1)
 plot(x_xii,uu,'xr');
 hold on;
-plot(x_xii,x_xii.^5,'k');
+plot(x_xii,u(x_xii),'k');
 
 
 
+%%
+% error
+
+% the 0-dim error (u_h - u)
+% u_h = uu;
+% u   = x_xii.^5;
+% 
+% e_L2_up   = sqrt(sum(x_xii.*(u_h - u)));
+% e_L2_down = sqrt(sum(x_xii.*u.^2));
 
 
+e_L2_up = 0;
+for ee = 1 : n_el
+    for qua = 1 : n_int
+        u_h = 0;
+        x_l = 0;
+        x_ele = x_coor(IEN(ee,:));
+        for aa = 1 : n_en
+            u_h = u_h + disp(IEN(ee,aa)) * PolyShape(pp,aa,xi(qua),0);
+            x_l = x_l + x_ele(aa) * PolyShape(pp,aa,xi(qua),0);
+        end
+        e_L2_up = e_L2_up + weight(qua) * (u_h - u(x_l)^5)^2;
+    end
+end
+e_L2_up = sqrt(e_L2_up);
 
+e_L2_dowm = 0;
+for ee = 1 : n_el
+    for qua = 1 : n_int
+        x_l = 0;
+        x_ele = x_coor(IEN(ee,:));
+        for aa = 1 : n_en
+            x_l = x_l + x_ele(aa) * PolyShape(pp,aa,xi(qua),0);
+        end
+        e_L2_dowm = e_L2_dowm + weight(qua) * (u(x_l)^5)^2;
+    end
+end
+e_L2_dowm = sqrt(e_L2_dowm);
 
-
+e_L2 = e_L2_up/e_L2_dowm;
 % EOF
