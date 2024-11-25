@@ -8,7 +8,7 @@ f = @(x) -20*x.^3; % f(x) = x
 g = 1.0;           % u    = g  at x = 1
 h = 0.0;           % -u,x = h  at x = 0
 u = @(x) x.^5;      % test solve
-
+u_x = @(x) 5*x.^4;
 % Setup the mesh
 pp   = 1;              % polynomial degree
 n_en = pp + 1;         % number of element or local nodes
@@ -150,8 +150,9 @@ plot(x_xii,u(x_xii),'k');
 % e_L2_up   = sqrt(sum(x_xii.*(u_h - u)));
 % e_L2_down = sqrt(sum(x_xii.*u.^2));
 
-
-e_L2_up = 0;
+%e_L2
+e_L2_up   = 0;
+e_L2_dowm = 0;
 for ee = 1 : n_el
     for qua = 1 : n_int
         u_h = 0;
@@ -161,23 +162,34 @@ for ee = 1 : n_el
             u_h = u_h + disp(IEN(ee,aa)) * PolyShape(pp,aa,xi(qua),0);
             x_l = x_l + x_ele(aa) * PolyShape(pp,aa,xi(qua),0);
         end
-        e_L2_up = e_L2_up + weight(qua) * (u_h - u(x_l)^5)^2;
+        e_L2_up = e_L2_up + weight(qua) * (u_h - u(x_l))^2;
+        e_L2_dowm = e_L2_dowm + weight(qua) * u(x_l)^2;
     end
 end
 e_L2_up = sqrt(e_L2_up);
+e_L2_dowm = sqrt(e_L2_dowm);
+e_L2 = e_L2_up/e_L2_dowm;
 
-e_L2_dowm = 0;
+
+%e_H1
+e_H1_up   = 0;
+e_H1_dowm = 0;
 for ee = 1 : n_el
     for qua = 1 : n_int
-        x_l = 0;
+        u_h_x = 0;
+        x_l   = 0;
         x_ele = x_coor(IEN(ee,:));
         for aa = 1 : n_en
+            u_h_x = u_h_x + disp(IEN(ee,aa)) * PolyShape(pp,aa,xi(qua),1);
             x_l = x_l + x_ele(aa) * PolyShape(pp,aa,xi(qua),0);
         end
-        e_L2_dowm = e_L2_dowm + weight(qua) * (u(x_l)^5)^2;
+        e_H1_up = e_H1_up + weight(qua) * (u_h_x - u_x(x_l))^2;
+        e_H1_dowm = e_H1_dowm + weight(qua) * u_x(x_l)^2;
     end
 end
-e_L2_dowm = sqrt(e_L2_dowm);
+e_H1_up = sqrt(e_H1_up);
+e_H1_dowm = sqrt(e_H1_dowm);
+e_H1 = e_H1_up/e_H1_dowm;
 
-e_L2 = e_L2_up/e_L2_dowm;
+
 % EOF
