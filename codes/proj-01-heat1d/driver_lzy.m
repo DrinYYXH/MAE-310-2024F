@@ -13,15 +13,15 @@ u_x = @(x) 5*x.^4;
 % Setup the mesh
 pp   = 1;              % polynomial degree
 n_en = pp + 1;         % number of element or local nodes
-n_el = 4;              % number of elements
+n_el = 10;              % number of elements
 n_np = n_el * pp + 1;  % number of nodal points
 n_eq = n_np - 1;       % number of equations
 n_int = 10;
 
-% hh = 1.0 / (n_np - 1); % space between two adjacent nodes
-% x_coor = 0 : hh : 1;   % nodal coordinates for equally spaced nodes
 
-%set up ID&IEN array, and also element space and nodal coordinates for equally spaced nodes
+%% mesh
+
+%initial the mesh for equally spaced nodes
 mesh = GenerateMesh(n_el,n_en);
 
 IEN    = mesh.IEN;
@@ -29,10 +29,14 @@ ID     = mesh.ID;
 x_coor = mesh.coor;
 hh     = mesh.hh;
 
-disp = FEM(mesh,h,g,n_int,f);
+
+%% FEM
+
+%solve FEM problem
+displacement = FEM(mesh,h,g,n_int,f);
 
 
-%%
+%% visualization
 
 % maybe a stupid way that make a large array just call it IP array, about the same as IEN array
 % IP array is mainly the find every point of uu from partial coor to total coor
@@ -59,7 +63,7 @@ for ee = 1 : n_el
 
         x_xii(IP(ee,xip)) = x_xii(IP(ee,xip)) + x_coor(IEN(ee,aa)) * PolyShape(pp,aa,xii,0);
 
-        uu(IP(ee,xip)) = uu(IP(ee,xip)) + disp(IEN(ee,aa)) * PolyShape(pp,aa,xii,0);
+        uu(IP(ee,xip)) = uu(IP(ee,xip)) + displacement(IEN(ee,aa)) * PolyShape(pp,aa,xii,0);
 
         end
 
@@ -79,16 +83,65 @@ plot(x_xii,u(x_xii),'k');
 
 
 
-%%
-% error
+%% error
+
 n_int = 10; % can make the Guass digree different with FEM
-[e_L2,e_H1] = Error(mesh,disp,n_int,u,u_x);
+[e_L2,e_H1] = Error(mesh,displacement,n_int,u,u_x);
 
 
 
 
 
-%%
+%% h-error visualization
+
+n_ele = [2,4,6,8,10,12,14,16];
+e_L2 = zeros(1,length(n_ele));
+e_H1 = zeros(1,length(n_ele));
+
+
+for i = 1 : length(n_ele)
+
+    % Define the external source or force and boundary data
+    f = @(x) -20*x.^3; % f(x) = x
+    g = 1.0;           % u    = g  at x = 1
+    h = 0.0;           % -u,x = h  at x = 0
+    u = @(x) x.^5;      % test solve
+    u_x = @(x) 5*x.^4;
+
+    % Setup the mesh
+    pp   = 1;              % polynomial degree
+    n_en = pp + 1;         % number of element or local nodes
+    n_el = n_ele(i);              % number of elements
+    n_np = n_el * pp + 1;  % number of nodal points
+    n_eq = n_np - 1;       % number of equations
+    n_int = 10;
+
+    %initial the mesh for equally spaced nodes
+    mesh = GenerateMesh(n_el,n_en);
+
+    IEN    = mesh.IEN;
+    ID     = mesh.ID;
+    x_coor = mesh.coor;
+    hh     = mesh.hh;
+
+    %solve FEM problem
+    displacement = FEM(mesh,h,g,n_int,f);
+
+    [e_L2(i),e_H1(i)] = Error(mesh,displacement,n_int,u,u_x);
+
+
+end
+
+
+
+
+figure(2)
+plot(log(1./n_ele),log(e_L2),'-xr');
+hold on;
+plot(log(1./n_ele),log(e_H1),'-.k');
+
+p1 = polyfit(log(1./n_ele),log(e_L2),1);
+p2 = polyfit(log(1./n_ele),log(e_H1),1);
 
 
 

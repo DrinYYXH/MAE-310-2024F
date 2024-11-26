@@ -1,4 +1,4 @@
-function disp = FEM(mesh,h,g,n_int,f)
+function displacment = FEM(mesh,h,g,n_int,f)
 %FEM 此处显示有关此函数的摘要
 %   此处显示详细说明
 
@@ -70,7 +70,7 @@ end
 % Solve Kd = F equation
 d_temp = K \ F;
 
-disp = [d_temp; g];
+displacment = [d_temp; g];
 
 
 end
