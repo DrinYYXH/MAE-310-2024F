@@ -11,7 +11,7 @@ u = @(x) x.^5;      % test solve
 u_x = @(x) 5*x.^4;
 
 % Setup the mesh
-pp   = 1;              % polynomial degree
+pp   = 2;              % polynomial degree
 n_en = pp + 1;         % number of element or local nodes
 n_el = 10;              % number of elements
 n_np = n_el * pp + 1;  % number of nodal points
@@ -109,7 +109,7 @@ for i = 1 : length(n_ele)
     u_x = @(x) 5*x.^4;
 
     % Setup the mesh
-    pp   = 1;              % polynomial degree
+    pp   = 2;              % polynomial degree
     n_en = pp + 1;         % number of element or local nodes
     n_el = n_ele(i);              % number of elements
     n_np = n_el * pp + 1;  % number of nodal points
@@ -127,6 +127,7 @@ for i = 1 : length(n_ele)
     %solve FEM problem
     displacement = FEM(mesh,h,g,n_int,f);
 
+    n_int = 20;
     [e_L2(i),e_H1(i)] = Error(mesh,displacement,n_int,u,u_x);
 
 
@@ -140,11 +141,23 @@ plot(log(1./n_ele),log(e_L2),'-xr');
 hold on;
 plot(log(1./n_ele),log(e_H1),'-.k');
 
+xlabel('log(h)');
+ylabel('log(error)');
+title('h-error');
+legend('e_{L2}', 'e_{H1}','Location','best');
+
+
+
 p1 = polyfit(log(1./n_ele),log(e_L2),1);
 p2 = polyfit(log(1./n_ele),log(e_H1),1);
 
 
+slope1 = sprintf('Slope e_{H1} = %.2f', p2(1));
+slope2 = sprintf('Slope e_{L2} = %.2f', p1(1));
 
+% 根据需要调整文字位置
+text(-2, -1, slope1, 'FontSize', 12, 'Color', 'k');
+text(-2, -4, slope2, 'FontSize', 12, 'Color', 'r');
 
 
 
