@@ -1,4 +1,4 @@
-function [ID,IEN,hh,x_coor] = GenerateMesh(n_el,n_en)
+function mesh = GenerateMesh(n_el,n_en)
 %MESH 此处显示有关此函数的摘要
 %   此处显示详细说明
 n_np = n_el * (n_en - 1) + 1;
@@ -13,10 +13,17 @@ end
 
 % Setup the ID array for the problem
 ID = 1 : n_np;
-ID(end) = 0;% this depend on the B.C.
+ID(end) = 0;           % this depend on the B.C.
 
 hh = 1.0 / (n_np - 1); % space between two adjacent nodes
 x_coor = 0 : hh : 1;   % nodal coordinates for equally spaced nodes
+
+mesh.IEN  = IEN;
+mesh.ID   = ID;
+mesh.coor = x_coor;
+mesh.hh   = hh; 
+mesh.n_el = n_el;
+mesh.n_en = n_en;
 
 end
 

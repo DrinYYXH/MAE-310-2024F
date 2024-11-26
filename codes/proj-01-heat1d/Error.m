@@ -1,6 +1,13 @@
-function [e_L2,e_H1] = Error(n_el,n_en,IEN,disp,n_int,u,u_x)
+function [e_L2,e_H1] = Error(mesh,disp,n_int,u,u_x)
 %ERROR 此处显示有关此函数的摘要
 %   此处显示详细说明
+
+IEN    = mesh.IEN;
+ID     = mesh.ID;
+x_coor = mesh.coor;
+hh     = mesh.hh; 
+n_el   = mesh.n_el;
+n_en   = mesh.n_en;
 
 pp = n_en - 1;         % polynomial degree
 n_np = n_el * pp + 1;  % number of nodal points

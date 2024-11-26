@@ -22,9 +22,14 @@ n_int = 10;
 % x_coor = 0 : hh : 1;   % nodal coordinates for equally spaced nodes
 
 %set up ID&IEN array, and also element space and nodal coordinates for equally spaced nodes
-[ID,IEN,hh,x_coor] = GenerateMesh(n_el,n_en);
+mesh = GenerateMesh(n_el,n_en);
 
-disp = FEM(n_el,n_en,h,g,n_int,x_coor,ID,IEN,f);
+IEN    = mesh.IEN;
+ID     = mesh.ID;
+x_coor = mesh.coor;
+hh     = mesh.hh;
+
+disp = FEM(mesh,h,g,n_int,f);
 
 
 %%
@@ -76,8 +81,8 @@ plot(x_xii,u(x_xii),'k');
 
 %%
 % error
-
-[e_L2,e_H1] = Error(n_el,n_en,IEN,disp,n_int,u,u_x);
+n_int = 10; % can make the Guass digree different with FEM
+[e_L2,e_H1] = Error(mesh,disp,n_int,u,u_x);
 
 
 

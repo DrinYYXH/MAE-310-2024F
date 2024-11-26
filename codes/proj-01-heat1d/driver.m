@@ -1,9 +1,11 @@
-clear all; clc; clf; % clean the memory, screen, and figure
+clear all; clc; %clf; % clean the memory, screen, and figure
 
 % Problem definition
 f = @(x) -20*x.^3; % f(x) is the source
 g = 1.0;           % u    = g  at x = 1
 h = 0.0;           % -u,x = h  at x = 0
+u = @(x) x.^5;      % test solve
+u_x = @(x) 5*x.^4;
 
 % Setup the mesh
 pp   = 1;              % polynomial degree
@@ -83,6 +85,10 @@ disp = [d_temp; g];
 %hold on;
 %plot(x_sam, y_sam, '-k', 'LineWidth', 3);
 
+
+%% visualization prof
+
+
 n_sam = 20;
 xi_sam = -1 : (2/n_sam) : 1;
 
@@ -123,50 +129,7 @@ plot(x_sam, y_sam, '-k','LineWidth',3);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%% 
-
-% X = 0 : hh : 1;
-% uu = zeros(size(X));
-% Xi = 2*(mod(X,hh)/hh) - 1;
-% 
-% for xx = 1 : length(X)
-%     for aa = 1 : n_en
-%         p_temp = ceil(X(xx)/hh);
-%         if p_temp < 1
-%             ee = 1;
-%         else
-%             ee = ceil(X(xx)/hh);
-%         end
-% 
-%         % syms xii
-%         % x_xii = x_coor(IEN(ee,aa))*PolyShape(pp,aa,xii,0);
-%         % xii_x = finverse(x_xii,xii);
-% 
-%         uu(xx) = uu(xx) + disp(IEN(ee,aa)) * PolyShape(pp,aa,Xi(xx),0);
-%     end
-% end
-% 
-% 
-% plot(X,uu);
-
-%%
+%% visualization lzy
 
 % maybe a stupid way that make a large array just call it IP array, about the same as IEN array
 % IP array is mainly the find every point of uu from partial coor to total coor
@@ -210,6 +173,19 @@ figure(1)
 plot(x_xii,uu,'xr');
 hold on;
 plot(x_xii,x_xii.^5,'k');
+
+
+%% error H1 L2
+
+[e_L2,e_H1] = Error(n_el,n_en,IEN,disp,n_int,u,u_x);
+
+
+
+
+
+
+
+
 
 
 

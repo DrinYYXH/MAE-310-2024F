@@ -1,6 +1,13 @@
-function [disp] = FEM(n_el,n_en,h,g,n_int,x_coor,ID,IEN,f)
+function disp = FEM(mesh,h,g,n_int,f)
 %FEM 此处显示有关此函数的摘要
 %   此处显示详细说明
+
+IEN    = mesh.IEN;
+ID     = mesh.ID;
+x_coor = mesh.coor;
+hh     = mesh.hh;
+n_el   = mesh.n_el;
+n_en   = mesh.n_en;
 
 pp = n_en - 1;
 n_np = n_el * pp + 1;  % number of nodal points
