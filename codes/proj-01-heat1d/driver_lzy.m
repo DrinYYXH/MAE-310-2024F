@@ -11,12 +11,12 @@ u = @(x) x.^5;      % test solve
 u_x = @(x) 5*x.^4;
 
 % Setup the mesh
-pp   = 2;              % polynomial degree
+pp   = 3;              % polynomial degree
 n_en = pp + 1;         % number of element or local nodes
-n_el = 10;              % number of elements
+n_el = 4;              % number of elements
 n_np = n_el * pp + 1;  % number of nodal points
 n_eq = n_np - 1;       % number of equations
-n_int = 10;
+n_int = 6;
 
 
 %% mesh
@@ -34,6 +34,13 @@ hh     = mesh.hh;
 
 %solve FEM problem
 displacement = FEM(mesh,h,g,n_int,f);
+
+% filename = 'displacement.txt';
+% fileID = fopen(filename, 'a');
+% fprintf(fileID, '%-6.4e ', displacement);
+% fprintf(fileID, '\n');
+% fclose(fileID);
+
 
 
 %% visualization
@@ -109,7 +116,7 @@ for i = 1 : length(n_ele)
     u_x = @(x) 5*x.^4;
 
     % Setup the mesh
-    pp   = 1;              % polynomial degree
+    pp   = 3;              % polynomial degree
     n_en = pp + 1;         % number of element or local nodes
     n_el = n_ele(i);              % number of elements
     n_np = n_el * pp + 1;  % number of nodal points
@@ -156,8 +163,8 @@ slope1 = sprintf('Slope e_{H1} = %.2f', p2(1));
 slope2 = sprintf('Slope e_{L2} = %.2f', p1(1));
 
 % 根据需要调整文字位置
-text(-2, -1, slope1, 'FontSize', 12, 'Color', 'k');
-text(-2, -4, slope2, 'FontSize', 12, 'Color', 'r');
+text(-2, -5.5, slope1, 'FontSize', 12, 'Color', 'k');
+text(-2, -7, slope2, 'FontSize', 12, 'Color', 'r');
 
 
 
