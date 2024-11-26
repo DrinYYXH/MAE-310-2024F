@@ -41,13 +41,21 @@ e_H1_up   = 0;
 e_H1_down = 0;
 for ee = 1 : n_el
     for qua = 1 : n_int
-        u_h_x = 0;
-        x_l   = 0;
-        x_ele = x_coor(IEN(ee,:));
+        u_h_x  = 0;
+        x_l    = 0;
+        x_ele  = x_coor(IEN(ee,:));
+        dx_dxi = 0.0;
+
         for aa = 1 : n_en
-            u_h_x = u_h_x + disp(IEN(ee,aa)) * PolyShape(pp,aa,xi(qua),1);
             x_l = x_l + x_ele(aa) * PolyShape(pp,aa,xi(qua),0);
+            dx_dxi = dx_dxi + x_ele(aa) * PolyShape(pp, aa, xi(qua), 1);
         end
+        dxi_dx = 1.0 / dx_dxi;
+
+        for aa = 1 : n_en
+            u_h_x = u_h_x + disp(IEN(ee,aa)) * PolyShape(pp,aa,xi(qua),1) * dxi_dx;
+        end
+        
         e_H1_up   = e_H1_up + weight(qua) * (u_h_x - u_x(x_l))^2;
         e_H1_down = e_H1_down + weight(qua) * u_x(x_l)^2;
     end
