@@ -173,6 +173,7 @@ save("HEAT", "disp", "n_el_x", "n_el_y");
 
 error_Sn0 = 0;
 error_Sn1 = 0;
+exact_Sn1 = 0;
 
 for ee = 1 : n_el
   x_ele   = x_coor( IEN(ee, 1:n_en) );
@@ -213,9 +214,20 @@ for ee = 1 : n_el
     error_Sn1 = error_Sn1 + weight(ll) * ( ( u_h   - exact(x_l , y_l)   )^2 ...
                                          + ( u_h_x - exact_x(x_l , y_l) )^2 ...
                                          + ( u_h_y - exact_y(x_l , y_l) )^2 ) * detJ;
+
+    exact_Sn1 = exact_Sn1 + weight(ll) * (  exact(x_l , y_l)   ^2 ...
+                                         +  exact_x(x_l , y_l) ^2 ...
+                                         +  exact_y(x_l , y_l) ^2 ) * detJ;
     
   end
 end
+
+error_Sn0 = sqrt(error_Sn0);
+error_Sn1 = sqrt(error_Sn1);
+exact_Sn1 = sqrt(exact_Sn1);
+
+e0 = error_Sn0/exact_Sn1;
+e1 = error_Sn1/exact_Sn1;
 
 
 
