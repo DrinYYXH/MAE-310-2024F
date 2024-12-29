@@ -171,35 +171,51 @@ save("HEAT", "disp", "n_el_x", "n_el_y");
 
 % loop over element to assembly the matrix and vector
 
-u_h = zeros(n_np, 1);
-error = u_h;
+error_Sn0 = 0;
+error_Sn1 = 0;
+
 for ee = 1 : n_el
-  x_ele = x_coor( IEN(ee, 1:n_en) );
-  y_ele = y_coor( IEN(ee, 1:n_en) );
+  x_ele   = x_coor( IEN(ee, 1:n_en) );
+  y_ele   = y_coor( IEN(ee, 1:n_en) );
+  u_h     = 0;
+  u_h_x  = 0;
+  u_h_y = 0;
   
-  for ll = 1 : n_int
-    x_l = 0.0; y_l = 0.0;
+  for ll = 1 : n_int    
+    x_l = 0.0; 
+    y_l = 0.0;
     dx_dxi = 0.0; dx_deta = 0.0;
     dy_dxi = 0.0; dy_deta = 0.0;
     for aa = 1 : n_en
       x_l = x_l + x_ele(aa) * Tri(aa, xi(ll), eta(ll));
       y_l = y_l + y_ele(aa) * Tri(aa, xi(ll), eta(ll));
 
-      u_h(IEN(ee,aa)) = u_h(IEN(ee,aa)) + disp(IEN(ee,aa)) * Tri(aa, xi(ll), eta(ll));
+      [Na_xi, Na_eta] = Tri_grad(aa, xi(ll), eta(ll));
+      dx_dxi  = dx_dxi  + x_ele(aa) * Na_xi;
+      dx_deta = dx_deta + x_ele(aa) * Na_eta;
+      dy_dxi  = dy_dxi  + y_ele(aa) * Na_xi;
+      dy_deta = dy_deta + y_ele(aa) * Na_eta;
+
+      [Na_xi, Na_eta] = Tri_grad(aa, xi(ll), eta(ll));
+      Na_x = (Na_xi * dy_deta - Na_eta * dy_dxi) / detJ;
+      Na_y = (-Na_xi * dx_deta + Na_eta * dx_dxi) / detJ;
+
+      u_h   = u_h  + disp(IEN(ee,aa)) * Tri(aa, xi(ll), eta(ll));
+      u_h_x = u_h_x + disp(IEN(ee,aa)) * Na_x;
+      u_h_y = u_h_y  + disp(IEN(ee,aa)) * Na_y;
 
     end
 
-    error(IEN(ee,aa)) =u_h(IEN(ee,aa)) - exact(x_l , y_l);
+    detJ = dx_dxi * dy_deta - dx_deta * dy_dxi;
+
+    error_Sn0 = error_Sn0 + weight(ll) * (u_h - exact(x_l , y_l))^2 * detJ;
+
+    error_Sn1 = error_Sn1 + weight(ll) * ( ( u_h   - exact(x_l , y_l)   )^2 ...
+                                         + ( u_h_x - exact_x(x_l , y_l) )^2 ...
+                                         + ( u_h_y - exact_y(x_l , y_l) )^2 ) * detJ;
     
   end
 end
-
-% % quadrature rule for error
-% n_int_xi  = 3;
-% n_int_eta = 3;
-% n_int     = n_int_xi * n_int_eta;
-% [xi, eta, weight] = Gauss2D(n_int_xi, n_int_eta);
-% error_Sn0 = 
 
 
 
