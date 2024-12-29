@@ -152,4 +152,48 @@ end
 % HEAT.mat
 save("HEAT", "disp", "n_el_x", "n_el_y");
 
+
+
+
+
+
+%% error
+
+% loop over element to assembly the matrix and vector
+
+u_h = zeros(n_np, 1);
+error = u_h;
+for ee = 1 : n_el
+  x_ele = x_coor( IEN(ee, 1:n_en) );
+  y_ele = y_coor( IEN(ee, 1:n_en) );
+  
+  for ll = 1 : n_int
+    x_l = 0.0; y_l = 0.0;
+    dx_dxi = 0.0; dx_deta = 0.0;
+    dy_dxi = 0.0; dy_deta = 0.0;
+    for aa = 1 : n_en
+      x_l = x_l + x_ele(aa) * Quad(aa, xi(ll), eta(ll));
+      y_l = y_l + y_ele(aa) * Quad(aa, xi(ll), eta(ll));
+
+      u_h(IEN(ee,aa)) = u_h(IEN(ee,aa)) + disp(IEN(ee,aa)) * Quad(aa, xi(ll), eta(ll));
+    end
+
+    error(IEN(ee,aa)) =u_h(IEN(ee,aa)) - exact(x_l , y_l);
+    
+  end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 % EOF

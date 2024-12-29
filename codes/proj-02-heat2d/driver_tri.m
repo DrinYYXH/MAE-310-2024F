@@ -22,8 +22,8 @@ eta    = [1/6 1/6 2/3];
 
 % mesh generation
 n_en   = 3;               % number of nodes in an element
-n_el_x = 60;               % number of elements in x-dir
-n_el_y = 60;               % number of elements in y-dir
+n_el_x = 4;               % number of elements in x-dir
+n_el_y = 4;               % number of elements in y-dir
 n_el   = n_el_x * n_el_y * 2; % total number of elements
 
 n_np_x = n_el_x + 1;      % number of nodal points in x-dir
@@ -172,7 +172,7 @@ save("HEAT", "disp", "n_el_x", "n_el_y");
 % loop over element to assembly the matrix and vector
 
 u_h = zeros(n_np, 1);
-
+error = u_h;
 for ee = 1 : n_el
   x_ele = x_coor( IEN(ee, 1:n_en) );
   y_ele = y_coor( IEN(ee, 1:n_en) );
@@ -183,37 +183,23 @@ for ee = 1 : n_el
     dy_dxi = 0.0; dy_deta = 0.0;
     for aa = 1 : n_en
       x_l = x_l + x_ele(aa) * Tri(aa, xi(ll), eta(ll));
-      y_l = y_l + y_ele(aa) * Tri(aa, xi(ll), eta(ll));    
-      [Na_xi, Na_eta] = Tri_grad(aa, xi(ll), eta(ll));
-      dx_dxi  = dx_dxi  + x_ele(aa) * Na_xi;
-      dx_deta = dx_deta + x_ele(aa) * Na_eta;
-      dy_dxi  = dy_dxi  + y_ele(aa) * Na_xi;
-      dy_deta = dy_deta + y_ele(aa) * Na_eta;
+      y_l = y_l + y_ele(aa) * Tri(aa, xi(ll), eta(ll));
+
+      u_h(IEN(ee,aa)) = u_h(IEN(ee,aa)) + disp(IEN(ee,aa)) * Tri(aa, xi(ll), eta(ll));
+
     end
+
+    error(IEN(ee,aa)) =u_h(IEN(ee,aa)) - exact(x_l , y_l);
     
-    detJ = dx_dxi * dy_deta - dx_deta * dy_dxi;
-    
-    for aa = 1 : n_en
-      Na = Tri(aa, xi(ll), eta(ll));
-      [Na_xi, Na_eta] = Tri_grad(aa, xi(ll), eta(ll));
-      Na_x = (Na_xi * dy_deta - Na_eta * dy_dxi) / detJ;
-      Na_y = (-Na_xi * dx_deta + Na_eta * dx_dxi) / detJ;
-      
-      u_h = f_ele(aa) + weight(ll) * detJ * f(x_l, y_l) * Na;
-      
-      for bb = 1 : n_en
-        Nb = Tri(bb, xi(ll), eta(ll));
-        [Nb_xi, Nb_eta] = Tri_grad(bb, xi(ll), eta(ll));
-        Nb_x = (Nb_xi * dy_deta - Nb_eta * dy_dxi) / detJ;
-        Nb_y = (-Nb_xi * dx_deta + Nb_eta * dx_dxi) / detJ;
-        
-        k_ele(aa, bb) = k_ele(aa,bb) + weight(ll) * detJ * kappa * (Na_x * Nb_x + Na_y * Nb_y);
-      end
-    end
   end
 end
 
-
+% % quadrature rule for error
+% n_int_xi  = 3;
+% n_int_eta = 3;
+% n_int     = n_int_xi * n_int_eta;
+% [xi, eta, weight] = Gauss2D(n_int_xi, n_int_eta);
+% error_Sn0 = 
 
 
 
