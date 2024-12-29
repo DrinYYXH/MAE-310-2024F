@@ -11,9 +11,9 @@ u = @(x) x.^5;      % test solve
 u_x = @(x) 5*x.^4;
 
 % Setup the mesh
-pp   = 3;              % polynomial degree
+pp   = 2;              % polynomial degree
 n_en = pp + 1;         % number of element or local nodes
-n_el = 4;              % number of elements
+n_el = 2;              % number of elements
 n_np = n_el * pp + 1;  % number of nodal points
 n_eq = n_np - 1;       % number of equations
 n_int = 6;
