@@ -92,7 +92,7 @@ for ee = 1 : n_el
       dy_dxi  = dy_dxi  + y_ele(aa) * Na_xi;
       dy_deta = dy_deta + y_ele(aa) * Na_eta;
     end
-    
+
     detJ = dx_dxi * dy_deta - dx_deta * dy_dxi;
     
     for aa = 1 : n_en
