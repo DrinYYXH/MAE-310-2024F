@@ -90,7 +90,7 @@ clc;
 
 n_en   = 3.0;                                  % number of nodes in an element
 
-n_ele   = [2,4,6,8,10];
+n_ele   = [2,4,6,8,10,12,14,16,18,20];
 n_ele_x = n_ele;               % number of elements in x-dir
 n_ele_y = n_ele;               % number of elements in y-dir
 
@@ -178,11 +178,11 @@ p1 = polyfit(log(hh),log(e0),1);
 p2 = polyfit(log(hh),log(e1),1);
 
 
-% slope1 = sprintf('Slope e_{0} = %.2f', p1(1));
-% slope2 = sprintf('Slope e_{1} = %.2f', p2(1));
-% % 根据需要调整文字位置
-% text(-2, -5.5, slope1, 'FontSize', 12, 'Color', 'k');
-% text(-2, -7, slope2, 'FontSize', 12, 'Color', 'r');
+slope1 = sprintf('Slope e_{0} = %.2f', p1(1));
+slope2 = sprintf('Slope e_{1} = %.2f', p2(1));
+% 根据需要调整文字位置
+text(log(hh(end))+0.5, log(e0(end)), slope1, 'FontSize', 12, 'Color', 'r');
+text(log(hh(end))+0.5, log(e1(end)), slope2, 'FontSize', 12, 'Color', 'k');
 
 
 

@@ -282,11 +282,11 @@ p1 = polyfit(log(hh),log(e0),1);
 p2 = polyfit(log(hh),log(e1),1);
 
 
-% slope1 = sprintf('Slope e_{0} = %.2f', p1(1));
-% slope2 = sprintf('Slope e_{1} = %.2f', p2(1));
-% % 根据需要调整文字位置
-% text(-2, -5.5, slope1, 'FontSize', 12, 'Color', 'k');
-% text(-2, -7, slope2, 'FontSize', 12, 'Color', 'r');
+slope1 = sprintf('Slope e_{0} = %.2f', p1(1));
+slope2 = sprintf('Slope e_{1} = %.2f', p2(1));
+% 根据需要调整文字位置
+text(log(hh(end))+0.5, log(e0(end)), slope1, 'FontSize', 12, 'Color', 'r');
+text(log(hh(end))+0.5, log(e1(end)), slope2, 'FontSize', 12, 'Color', 'k');
 
 
 
