@@ -1,5 +1,6 @@
 function displacment = FEM(mesh,n_int,weight,xi,eta,f,kappa)
 
+%unpack mesh
 IEN = mesh.IEN;
 ID  = mesh.ID;
 LM  = mesh.LM;
