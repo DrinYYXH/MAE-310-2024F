@@ -60,11 +60,14 @@ mesh.IEN = IEN;
 mesh.ID  = ID;
 mesh.LM  = LM;
 
+mesh.n_en   = n_en;
 mesh.n_el   = n_el;
 mesh.n_np   = n_np;
 mesh.n_np_x = n_np_x;
 mesh.n_np_y = n_np_y;
 mesh.n_eq   = n_eq;
+mesh.n_el_x = n_el_x;
+mesh.n_el_y = n_el_y;
 
 mesh.x_coor = x_coor;
 mesh.y_coor = y_coor;
