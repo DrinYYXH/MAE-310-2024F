@@ -5,7 +5,15 @@ function mesh = MeshGenerate(n_en,n_el_x,n_el_y)
 % n_en   = 3;               % number of nodes in an element
 % n_el_x = 4;               % number of elements in x-dir
 % n_el_y = 4;               % number of elements in y-dir
-n_el   = n_el_x * n_el_y * 2; % total number of elements
+
+% total number of elements
+if n_en == 3
+    n_el   = n_el_x * n_el_y * 2; 
+ elseif n_en == 4
+    n_el   = n_el_x * n_el_y;
+else
+    error('Error: value of a should be 3 or 4.');
+end     
 
 n_np_x = n_el_x + 1;      % number of nodal points in x-dir
 n_np_y = n_el_y + 1;      % number of nodal points in y-dir
@@ -28,17 +36,32 @@ end
 
 % IEN array
 IEN = zeros(n_el, n_en);
-for ex = 1 : n_el_x
-  for ey = 1 : n_el_y
-    ee = 2 * ((ey-1) * n_el_x + ex) - 1; % element index low triangle
-    IEN(ee, 1) = (ey-1) * n_np_x + ex;
-    IEN(ee, 2) = (ey-1) * n_np_x + ex + 1;
-    IEN(ee, 3) =  ey    * n_np_x + ex;
-    ee = 2 * ((ey-1) * n_el_x + ex); % element index up triangle
-    IEN(ee, 1) = (ey-1) * n_np_x + ex + 1;
-    IEN(ee, 2) =  ey    * n_np_x + ex + 1;
-    IEN(ee, 3) =  ey    * n_np_x + ex;
-  end
+
+if n_en == 3
+    for ex = 1 : n_el_x
+      for ey = 1 : n_el_y
+        ee = 2 * ((ey-1) * n_el_x + ex) - 1; % element index low triangle
+        IEN(ee, 1) = (ey-1) * n_np_x + ex;
+        IEN(ee, 2) = (ey-1) * n_np_x + ex + 1;
+        IEN(ee, 3) =  ey    * n_np_x + ex;
+        ee = 2 * ((ey-1) * n_el_x + ex); % element index up triangle
+        IEN(ee, 1) = (ey-1) * n_np_x + ex + 1;
+        IEN(ee, 2) =  ey    * n_np_x + ex + 1;
+        IEN(ee, 3) =  ey    * n_np_x + ex;
+      end
+    end
+elseif n_en == 4
+     for ex = 1 : n_el_x
+      for ey = 1 : n_el_y
+        ee = (ey-1) * n_el_x + ex; % element index
+        IEN(ee, 1) = (ey-1) * n_np_x + ex;
+        IEN(ee, 2) = (ey-1) * n_np_x + ex + 1;
+        IEN(ee, 3) =  ey    * n_np_x + ex + 1;
+        IEN(ee, 4) =  ey    * n_np_x + ex;
+      end
+     end
+else
+    error('Error: value of a should be 3 or 4.');
 end
 
 % ID array
