@@ -34,11 +34,11 @@ end
 
 
 n_en   = 4;
-n_el_x = 40;
-n_el_y = 40;
+n_el_x = 4;
+n_el_y = 4;
 n_sd   = 2;
 
-f = @(x,y,i) 1; % source term
+f = @(x,y,i) (i == 1) * (x - 1) + (i == 2) * (y - 1); % source term
 
 mesh = MeshGenerate(n_en,n_el_x,n_el_y,n_sd);
 

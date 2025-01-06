@@ -108,19 +108,19 @@ end
 dn = K \ F;
 
 % insert dn back into the vector for all nodes
-displacement = zeros(n_np, 1);
+displacement = zeros(n_np, n_sd);
 
 for ii = 1 : n_np
-  index = ID(ii);
-  if index > 0
-    displacement(ii) = dn(index);
-  else
-    % modify disp with the g data. Here it does nothing because g is zero
-  end
+    for jj = 1 : n_sd
+        index = ID(ii,jj);
+        if index > 0
+            displacement(ii,jj) = dn(index);
+        else
+            % modify disp with the g data. Here it does nothing because g is zero
+        end
+    end
 end
-
 % save the solution vector and number of elements to disp with name
 % HEAT.mat
-save("HEAT", "displacement", "n_el_x", "n_el_y");
+save("U", "displacement", "n_el_x", "n_el_y");
 end
-
