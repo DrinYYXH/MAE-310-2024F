@@ -33,7 +33,21 @@ else
 end
 
 
+n_en   = 4;
+n_el_x = 4;
+n_el_y = 4;
+n_sd   = 2;
 
+mesh = MeshGenerate(n_en,n_el_x,n_el_y,n_sd);
+
+% quadrature rule
+n_int_xi  = 3;
+n_int_eta = 3;
+n_int     = n_int_xi * n_int_eta;
+[xi, eta, weight] = Gauss2D(n_int_xi, n_int_eta);
+
+
+displacement = FEM(mesh,n_int,weight,xi,eta,f,D);
 
 
 

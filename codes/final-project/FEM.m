@@ -1,4 +1,4 @@
-function displacement = FEM(mesh,n_int,weight,xi,eta,f,kappa)
+function displacement = FEM(mesh,n_int,weight,xi,eta,f,D)
 
 %unpack mesh
 IEN = mesh.IEN;
@@ -13,6 +13,7 @@ n_np_y = mesh.n_np_y;
 n_eq   = mesh.n_eq;
 n_el_x = mesh.n_el_x;
 n_el_y = mesh.n_el_y;
+n_sd   = mesh.n_sd;
 
 x_coor = mesh.x_coor;
 y_coor = mesh.y_coor;
