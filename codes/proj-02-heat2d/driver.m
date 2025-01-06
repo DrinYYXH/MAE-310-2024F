@@ -194,7 +194,7 @@ clc;
 
 n_en   = 3.0;                                  % number of nodes in an element
 
-n_ele   = [8,10,12,14,16,18,20,22,24,26];
+n_ele   = [2,4,6,8,10,12,14,16,18,20];
 n_ele_x = n_ele;               % number of elements in x-dir
 n_ele_y = n_ele;               % number of elements in y-dir
 
