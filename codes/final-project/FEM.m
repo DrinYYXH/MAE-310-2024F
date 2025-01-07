@@ -107,8 +107,9 @@ end
 
 % solve the stiffness matrix
 dn = K \ F;
-disp(K);
-disp(K - K');
+disp(size(dn));
+disp(size(K));
+
 
 % insert dn back into the vector for all nodes
 displacement = zeros(n_np, n_sd);

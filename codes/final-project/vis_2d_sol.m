@@ -1,77 +1,59 @@
-clear all; clc; clf;
-
-load("U.mat");
-
-hh_x = 1.0 / n_el_x;
-hh_y = 1.0 / n_el_y;
-
-n_np_x = n_el_x + 1;
-n_np_y = n_el_y + 1;
-
-[X, Y] = meshgrid(0 : hh_x : 1, 0 : hh_y : 1);
-Z = reshape(displacement, n_np_x, n_np_y)';
-surf(X, Y, Z);
-
-shading interp
-
-az = -61;
-el = 20;
-view(az,el);
-
-% EOF
-
-
-%%
 clf;
 
-% 假设加载的 displacement 是一个 25 x 2 的矩阵
+%unpack mesh
+IEN = mesh.IEN;
+ID  = mesh.ID;
+LM  = mesh.LM;
+
+n_en   = mesh.n_en;
+n_el   = mesh.n_el;
+n_np   = mesh.n_np;
+n_np_x = mesh.n_np_x;
+n_np_y = mesh.n_np_y;
+n_eq   = mesh.n_eq;
+n_el_x = mesh.n_el_x;
+n_el_y = mesh.n_el_y;
+n_sd   = mesh.n_sd;
+
+n_ee   = n_en * n_sd;
+
+x_coor = mesh.x_coor;
+y_coor = mesh.y_coor;
+
+hx = mesh.hx;
+hy = mesh.hy;
+
+
 load("U.mat");  % 加载 displacement 数据，假设文件中包含 displacement 变量
 
-% 网格尺寸
-n_el_x = 3;  % 4 个单元 (5 个节点)
-n_el_y = 3;  % 4 个单元 (5 个节点)
-
-% 计算网格步长
-hh_x = 1.0 / n_el_x;
-hh_y = 1.0 / n_el_y;
-
-% 节点数目
-n_np_x = n_el_x + 1;
-n_np_y = n_el_y + 1;
-
-% 生成网格坐标
-[X, Y] = meshgrid(0 : hh_x : 1, 0 : hh_y : 1);
 
 % 从 displacement 中提取位移数据
-u_x_num = displacement(:, 1)*1e9;  % x 方向的位移
-u_y_num = displacement(:, 2)*1e9;  % y 方向的位移
+u_x_num = displacement(:, 1);  % x 方向的位移
+u_y_num = displacement(:, 2);  % y 方向的位移
 
 % 将数值解位移应用到原始网格节点
-X_num = X + reshape(u_x_num, n_np_x, n_np_y)';
-Y_num = Y + reshape(u_y_num, n_np_x, n_np_y)';
+X_num = x_coor + u_x_num;
+Y_num = y_coor + u_y_num;
 
 % 绘制数值解变形后的网格
 figure(1);
 hold on;
 
 % 绘制数值解变形后的节点
-plot(X_num, Y_num, 'ko', 'MarkerFaceColor', 'r');  % 红色的变形后节点
+plot(X_num, Y_num, 'ko', 'MarkerFaceColor', 'r','MarkerSize',2);  % 红色的变形后节点
 
-% 绘制数值解变形后的网格线
-for i = 1:n_np_y
-    plot(X_num(i, :), Y_num(i, :), 'b');  % 绘制每一行
-end
-for j = 1:n_np_x
-    plot(X_num(:, j), Y_num(:, j), 'b');  % 绘制每一列
-end
+% % 绘制数值解变形后的网格线
+% plot(X_num, Y_num, 'b');
 
-% 原始网格（绘制四条边框）
-for i = 1:n_np_y
-    plot(X(i, :), Y(i, :), 'k--');  % 绘制每一行的虚线
-end
-for j = 1:n_np_x
-    plot(X(:, j), Y(:, j), 'k--');  % 绘制每一列的虚线
-end
+% % 原始网格（绘制四条边框）
+% for ny = 1 : n_np_x
+%     % 绘制竖直方向上的虚线
+%     plot([x_coor(ny), x_coor(ny)], [y_coor(1), y_coor(n_np_y)], 'k--');
+% end
+% for nx = 1 : n_np_y
+%     % 绘制水平方向上的虚线
+%     plot([x_coor(1), x_coor(n_np_x)], [y_coor(nx), y_coor(nx)], 'k--');
+% end
 
 % 设置图形
 axis equal;
@@ -82,45 +64,48 @@ hold off;
 
 
 
+
 % 计算理论解的位移（新增部分）
-u_x_ext = zeros(n_np_x, n_np_y);  % 初始化理论解 x 方向位移矩阵
-u_y_ext = zeros(n_np_x, n_np_y);  % 初始化理论解 y 方向位移矩阵
+u_x_ext = zeros(n_np,1);  % 初始化理论解 x 方向位移矩阵
+u_y_ext = zeros(n_np,1);  % 初始化理论解 y 方向位移矩阵
 
 % 从 exact 中提取位移数据
-for i = 1:n_np_x
-    for j = 1:n_np_y
+for ny = 1 : n_np_y
+    for nx = 1 : n_np_x
+        index = (ny-1)*n_np_x + nx;
         % 计算每个网格点 (x, y) 上的理论位移
-        u_x_ext(i,j) = exact(X(i,j), Y(i,j), 1)*1e9;  % x 方向的理论位移
-        u_y_ext(i,j) = exact(X(i,j), Y(i,j), 2)*1e9;  % y 方向的理论位移
+        u_x_ext(index) = exact(x_coor(index), y_coor(index), 1);  % x 方向的理论位移
+        u_y_ext(index) = exact(x_coor(index), y_coor(index), 2);  % y 方向的理论位移
     end
 end
-
 % 将理论解位移应用到原始网格节点
-X_ext = X + reshape(u_x_ext, n_np_x, n_np_y)';
-Y_ext = Y + reshape(u_y_ext, n_np_x, n_np_y)';
+x_ext = x_coor + u_x_ext;
+y_ext = y_coor + u_y_ext;
 
 % 绘制理论解变形后的网格
 figure(2);
 hold on;
 
 % 绘制理论解变形后的节点
-plot(X_ext, Y_ext, 'ko', 'MarkerFaceColor', 'r');  % 红色的变形后节点
+plot(x_ext, y_ext, 'ko', 'MarkerFaceColor', 'r','MarkerSize',2);  % 红色的变形后节点
 
 % 绘制理论解变形后的网格线
-for i = 1:n_np_y
-    plot(X_ext(i, :), Y_ext(i, :), 'b');  % 绘制每一行
-end
-for j = 1:n_np_x
-    plot(X_ext(:, j), Y_ext(:, j), 'b');  % 绘制每一列
+for ny = 1:n_np_y
+    for nx = 1:n_np_x
+    plot([x_ext(1), x_ext(n_np_x)], [y_ext(ny), y_ext(ny)], 'b');  % 绘制每一行
+    plot([x_ext(nx), x_ext(nx)], [y_ext(1), y_ext(n_np_y)], 'b');  % 绘制每一列
+    end
 end
 
-% 原始网格（绘制四条边框）
-for i = 1:n_np_y
-    plot(X(i, :), Y(i, :), 'k--');  % 绘制每一行的虚线
-end
-for j = 1:n_np_x
-    plot(X(:, j), Y(:, j), 'k--');  % 绘制每一列的虚线
-end
+% % 原始网格（绘制四条边框）
+% for ny = 1 : n_np_x
+%     % 绘制竖直方向上的虚线
+%     plot([x_coor(ny), x_coor(ny)], [y_coor(1), y_coor(n_np_y)], 'k--');
+% end
+% for nx = 1 : n_np_y
+%     % 绘制水平方向上的虚线
+%     plot([x_coor(1), x_coor(n_np_x)], [y_coor(nx), y_coor(nx)], 'k--');
+% end
 
 % 设置图形
 axis equal;
