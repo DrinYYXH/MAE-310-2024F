@@ -32,28 +32,31 @@ u_x_num = displacement(:, 1);  % x 方向的位移
 u_y_num = displacement(:, 2);  % y 方向的位移
 
 % 将数值解位移应用到原始网格节点
-X_num = x_coor + u_x_num;
-Y_num = y_coor + u_y_num;
+x_num = x_coor + u_x_num;
+y_num = y_coor + u_y_num;
 
 % 绘制数值解变形后的网格
 figure(1);
 hold on;
 
 % 绘制数值解变形后的节点
-plot(X_num, Y_num, 'ko', 'MarkerFaceColor', 'r','MarkerSize',2);  % 红色的变形后节点
+plot(x_num, y_num, 'ko', 'MarkerFaceColor', 'r','MarkerSize',5);  % 红色的变形后节点
 
-% % 绘制数值解变形后的网格线
-% plot(X_num, Y_num, 'b');
+% 绘制数值解变形后的网格线
+for ny = 1 : n_np_y
+    plot( x_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b')
+end
+for nx = 1 : n_np_x
+    plot( x_num(nx : n_np_x : end , 1) , y_num( nx : n_np_x : end , 1) , 'b')
+end
 
-% % 原始网格（绘制四条边框）
-% for ny = 1 : n_np_x
-%     % 绘制竖直方向上的虚线
-%     plot([x_coor(ny), x_coor(ny)], [y_coor(1), y_coor(n_np_y)], 'k--');
-% end
-% for nx = 1 : n_np_y
-%     % 绘制水平方向上的虚线
-%     plot([x_coor(1), x_coor(n_np_x)], [y_coor(nx), y_coor(nx)], 'k--');
-% end
+% 原始网格（绘制四条边框）
+for ny = 1 : n_np_y
+    plot( x_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--')
+end
+for nx = 1 : n_np_x
+    plot( x_coor(nx : n_np_x : end , 1) , y_coor( nx : n_np_x : end , 1) , 'k--')
+end
 
 % 设置图形
 axis equal;
@@ -87,25 +90,23 @@ figure(2);
 hold on;
 
 % 绘制理论解变形后的节点
-plot(x_ext, y_ext, 'ko', 'MarkerFaceColor', 'r','MarkerSize',2);  % 红色的变形后节点
+plot(x_ext, y_ext, 'ko', 'MarkerFaceColor', 'r','MarkerSize',5);  % 红色的变形后节点
 
 % 绘制理论解变形后的网格线
-for ny = 1:n_np_y
-    for nx = 1:n_np_x
-    plot([x_ext(1), x_ext(n_np_x)], [y_ext(ny), y_ext(ny)], 'b');  % 绘制每一行
-    plot([x_ext(nx), x_ext(nx)], [y_ext(1), y_ext(n_np_y)], 'b');  % 绘制每一列
-    end
+for ny = 1 : n_np_y
+    plot( x_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b')
+end
+for nx = 1 : n_np_x
+    plot( x_ext(nx : n_np_x : end , 1) , y_ext( nx : n_np_x : end , 1) , 'b')
 end
 
-% % 原始网格（绘制四条边框）
-% for ny = 1 : n_np_x
-%     % 绘制竖直方向上的虚线
-%     plot([x_coor(ny), x_coor(ny)], [y_coor(1), y_coor(n_np_y)], 'k--');
-% end
-% for nx = 1 : n_np_y
-%     % 绘制水平方向上的虚线
-%     plot([x_coor(1), x_coor(n_np_x)], [y_coor(nx), y_coor(nx)], 'k--');
-% end
+% 原始网格（绘制四条边框）
+for ny = 1 : n_np_y
+    plot( x_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--')
+end
+for nx = 1 : n_np_x
+    plot( x_coor(nx : n_np_x : end , 1) , y_coor( nx : n_np_x : end , 1) , 'k--')
+end
 
 % 设置图形
 axis equal;
