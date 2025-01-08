@@ -2,7 +2,7 @@ clear;
 clc;
  
 %% User-defined Parts
-D_defined = 1;  % define the asumption for two-dimentional analysis plane stain(1) or plane stress(2)
+D_defined = 2;  % define the asumption for two-dimentional analysis plane stain(1) or plane stress(2)
 
 
 
@@ -41,10 +41,9 @@ n_sd   = 2;
 
 exact = @(x,y,i) (i == 1) * (x*(x-1)*y*(y-1)) + (i == 2) * (x*(x-1)*y*(y-1));
 
-f = @(x,y,i) (i == 1) * -( (E / (1 - nu^2)) * (2*y*(y - 1) + nu*( (x - 1)*(2*y - 1) + x*(2*y - 1) ) ) + ...
-                           (E / (2*(1 + nu))) * ( x*(x - 1)*2 + (2*x - 1)*(x - 1) + 2*y*(2*x - 1) ) ) + ...
-             (i == 2) * -( (E / (2*(1 + nu))) * ( (x - 1)*(2*y - 1) + y*(2*x - 1) + 2*y*(2*x - 1) )   + ...
-                           (E / (1 - nu^2)) * (2*x*(x - 1) + nu*( (y - 1)*(2*x - 1) + y*(2*x - 1) ) ) );
+f = @(x,y,i) (i == 1) * ((2*E*y*(y - 1))/(nu^2 - 1) - (E*(nu/2 - 1/2)*(y*(2*x - 1) + (2*x - 1)*(y - 1) + 2*x*(x - 1)))/(nu^2 - 1) + (E*nu*x*(2*y - 1))/(nu^2 - 1) + (E*nu*(2*y - 1)*(x - 1))/(nu^2 - 1) ) + ...
+             (i == 2) * ((2*E*x*(x - 1))/(nu^2 - 1) - (E*(nu/2 - 1/2)*(x*(2*y - 1) + (2*y - 1)*(x - 1) + 2*y*(y - 1)))/(nu^2 - 1) + (E*nu*y*(2*x - 1))/(nu^2 - 1) + (E*nu*(2*x - 1)*(y - 1))/(nu^2 - 1) );
+
 
 
 
