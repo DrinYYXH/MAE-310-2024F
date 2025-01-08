@@ -37,7 +37,7 @@ for ee = 1 : n_el
     
     k_ele = zeros(n_ee, n_ee); % element stiffness matrix
     f_ele = zeros(n_ee, 1);    % element load vector
-    for i = 1 : n_sd
+    
         for ll = 1 : n_int
             x_l = 0.0; y_l = 0.0;
             dx_dxi = 0.0; dx_deta = 0.0;
@@ -61,10 +61,10 @@ for ee = 1 : n_el
                 Na_x = (Na_xi * dy_deta - Na_eta * dy_dxi) / detJ;
                 Na_y = (-Na_xi * dx_deta + Na_eta * dx_dxi) / detJ;
 
-                B_a = [Na_x , 0
-                       0    , Na_y
+                B_a = [Na_x , 0;
+                       0    , Na_y;
                        Na_y , Na_x];
-
+            for i = 1 : n_sd
                 f_ele(n_sd * (aa - 1) + i) = f_ele(n_sd * (aa - 1) + i) + weight(ll) * detJ * f(x_l, y_l, i) * Na;
                 
                 for bb = 1 : n_en
@@ -73,11 +73,11 @@ for ee = 1 : n_el
                     Nb_x = (Nb_xi * dy_deta - Nb_eta * dy_dxi) / detJ;
                     Nb_y = (-Nb_xi * dx_deta + Nb_eta * dx_dxi) / detJ;
 
-                    B_b = [Nb_x , 0
-                           0    , Nb_y
+                    B_b = [Nb_x , 0;
+                           0    , Nb_y;
                            Nb_y , Nb_x];
                     for j = 1 : n_sd
-                    k_ele(n_sd * (aa - 1) + i, n_sd * (bb - 1) + i) = k_ele(n_sd * (aa - 1) + i,n_sd * (bb - 1) + i) + weight(ll) * detJ * e{i}' * B_a' * D * B_b * e{j};
+                    k_ele(n_sd * (aa - 1) + i, n_sd * (bb - 1) + j) = k_ele(n_sd * (aa - 1) + i,n_sd * (bb - 1) + j) + weight(ll) * detJ * e{i}' * B_a' * D * B_b * e{j};
                     end % end of j loop
                 end % end of bb loop
             end % end of aa loop
@@ -92,7 +92,9 @@ for ee = 1 : n_el
                 for bb = 1 : n_en
                     QQ = ID(IEN(ee,bb),i);
                     if QQ > 0
-                        K(PP, QQ) = K(PP, QQ) + k_ele(aa, bb);
+                        for j = 1 : n_sd
+                            K(PP, QQ) = K(PP, QQ) + k_ele(n_sd * (aa - 1) + i, n_sd * (bb - 1) + j);
+                        end
                     else
                         % modify F with the boundary data
                         % here we do nothing because the boundary data g is zero or
