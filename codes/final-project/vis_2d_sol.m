@@ -44,18 +44,18 @@ plot(x_num, y_num, 'ko', 'MarkerFaceColor', 'r','MarkerSize',5);  % 红色的变
 
 % 绘制数值解变形后的网格线
 for ny = 1 : n_np_y
-    plot( x_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b')
+    plot( x_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b');
 end
 for nx = 1 : n_np_x
-    plot( x_num(nx : n_np_x : end , 1) , y_num( nx : n_np_x : end , 1) , 'b')
+    plot( x_num(nx : n_np_x : end , 1) , y_num( nx : n_np_x : end , 1) , 'b');
 end
 
 % 原始网格（绘制四条边框）
 for ny = 1 : n_np_y
-    plot( x_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--')
+    plot( x_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--');
 end
 for nx = 1 : n_np_x
-    plot( x_coor(nx : n_np_x : end , 1) , y_coor( nx : n_np_x : end , 1) , 'k--')
+    plot( x_coor(nx : n_np_x : end , 1) , y_coor( nx : n_np_x : end , 1) , 'k--');
 end
 
 % 设置图形
@@ -94,18 +94,18 @@ plot(x_ext, y_ext, 'ko', 'MarkerFaceColor', 'r','MarkerSize',5);  % 红色的变
 
 % 绘制理论解变形后的网格线
 for ny = 1 : n_np_y
-    plot( x_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b')
+    plot( x_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b');
 end
 for nx = 1 : n_np_x
-    plot( x_ext(nx : n_np_x : end , 1) , y_ext( nx : n_np_x : end , 1) , 'b')
+    plot( x_ext(nx : n_np_x : end , 1) , y_ext( nx : n_np_x : end , 1) , 'b');
 end
 
 % 原始网格（绘制四条边框）
 for ny = 1 : n_np_y
-    plot( x_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--')
+    plot( x_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--');
 end
 for nx = 1 : n_np_x
-    plot( x_coor(nx : n_np_x : end , 1) , y_coor( nx : n_np_x : end , 1) , 'k--')
+    plot( x_coor(nx : n_np_x : end , 1) , y_coor( nx : n_np_x : end , 1) , 'k--');
 end
 
 % 设置图形
