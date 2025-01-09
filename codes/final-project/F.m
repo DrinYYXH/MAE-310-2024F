@@ -11,12 +11,19 @@ syms x y E nu
 
 
 
+% exact_x  = x*(1-x)*y*(1-y);
+% exact_y  = x*(1-x)*y*(1-y);
+% 
+% exact_xx = (1-2*x)*y*(1-y);
+% exact_yy = (1-x)*x*(1-2*y);
+% exact_xy = exact_xx + exact_yy;
+
 exact_x  = x*(1-x)*y*(1-y);
-exact_y  = x*(1-x)*y*(1-y);
+exact_y  = 0;
 
 exact_xx = (1-2*x)*y*(1-y);
-exact_yy = (1-x)*x*(1-2*y);
-exact_xy = exact_xx + exact_yy;
+exact_yy = 0;
+exact_xy = (1-x)*x*(1-2*y);
 
 
 sigma = D * [exact_xx; exact_yy; exact_xy];

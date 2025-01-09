@@ -5,6 +5,8 @@ IEN = mesh.IEN;
 ID  = mesh.ID;
 LM  = mesh.LM;
 
+IDH        = mesh.IDH;
+ID_abandon = mesh.ID_abandon;
 
 n_en   = mesh.n_en;
 n_el   = mesh.n_el;
@@ -15,6 +17,8 @@ n_eq   = mesh.n_eq;
 n_el_x = mesh.n_el_x;
 n_el_y = mesh.n_el_y;
 n_sd   = mesh.n_sd;
+
+n_ee   = n_en * n_sd;
 
 x_coor = mesh.x_coor;
 y_coor = mesh.y_coor;

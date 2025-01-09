@@ -5,6 +5,9 @@ IEN = mesh.IEN;
 ID  = mesh.ID;
 LM  = mesh.LM;
 
+IDH        = mesh.IDH;
+ID_abandon = mesh.ID_abandon;
+
 n_en   = mesh.n_en;
 n_el   = mesh.n_el;
 n_np   = mesh.n_np;

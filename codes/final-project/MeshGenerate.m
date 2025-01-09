@@ -7,12 +7,16 @@ function mesh = MeshGenerate(n_en,n_el_x,n_el_y,n_sd)
 % run('gmesh_input.m');
 run('output.m');
 
-
+n_np   = msh.nbNod;
+n_el_x = n_np^(1/2) - 1;
+n_el_y = n_np^(1/2) - 1;
 n_el   = n_el_x * n_el_y;
 
+% n_el   = n_el_x * n_el_y;
+% 
 n_np_x = n_el_x + 1;      % number of nodal points in x-dir
 n_np_y = n_el_y + 1;      % number of nodal points in y-dir
-n_np   = n_np_x * n_np_y; % total number of nodal points
+% n_np   = n_np_x * n_np_y; % total number of nodal points
 
 x_coor = zeros(n_np, 1);
 y_coor = x_coor;
@@ -23,7 +27,7 @@ hy = 1.0 / n_el_y;        % mesh size in y-dir
 quads    = msh.QUADS;
 lines    = msh.LINES;
 position = msh.POS;
-length(lines);
+
 
 
 % IEN array
@@ -41,8 +45,8 @@ BC = [1, 2, 3, 4;
 ID = zeros(n_np,n_sd);
 
 ID_abandon = zeros(n_np,n_sd);
-Dirichlet_BC = [1, 0, 0, 0;
-                0, 0, 0, 4];
+Dirichlet_BC = [1, 2, 3, 4;
+                1, 2, 3, 4];
 for i = 1 : length(lines)
     for j = 1 : n_sd
     is_present = ismember(lines(i,3),Dirichlet_BC(j,:));

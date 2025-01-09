@@ -1,4 +1,4 @@
-function displacement = FEM(mesh,n_int,weight,xi,eta,f,D,g)
+function displacement = FEM(mesh,n_int,weight,xi,eta,f,D,g,h)
 
 %unpack mesh
 IEN = mesh.IEN;
@@ -41,7 +41,6 @@ for ee = 1 : n_el
     k_ele = zeros(n_ee, n_ee); % element stiffness matrix
     f_ele = zeros(n_ee, 1);    % element load vector
     f_g   = zeros(n_ee, 1);    % Dirichlet B.C.
-    f_h   = zeros(n_ee, 1);    % Neumann B.C.
     
      for ll = 1 : n_int
             x_l = 0.0; y_l = 0.0;
@@ -85,8 +84,8 @@ for ee = 1 : n_el
                         qq = n_sd*(bb-1) + j;
                         k_ele(pp,qq) = k_ele(pp,qq) + weight(ll) * detJ * e{i}' * B_a' * D * B_b * e{j};
 
-                    if ID_abandon(IEN(aa,ee),i) > 0
-                        f_g(qq)   = k_ele(pp,qq) * g(x_l, y_l, i);
+                    if ID_abandon(IEN(ee,aa),i) > 0
+                        f_g(qq)   = k_ele(pp,qq) * g(x_ele(aa), y_ele(aa), i);
                         f_ele(pp) = f_ele(pp) - f_g(qq);
                     end
 
@@ -95,39 +94,41 @@ for ee = 1 : n_el
 
                 f_ele(pp) = f_ele(pp) + weight(ll) * detJ * f(x_l, y_l, i) * Na;
 
-                    if IDH(IEN(aa,ee),i) > 0
-                        f_ele(pp) = f_ele(pp) + Na * weight(ll) * detJ * h(x_l, y_l, i);
+                    if IDH(IEN(ee,aa),i) > 0
+                        f_ele(pp) = f_ele(pp) + Na * weight(ll) * detJ * h(x_ele(aa), y_ele(aa), i) * ( [hx,hy] * e{i})/2;
                     end
 
             end % end of i loop
         end % end of aa loop
-     end
+     
 
 
-    for i = 1 : n_sd
-        for aa = 1 : n_en
-            pp = n_sd * (aa - 1) + i;
-            PP = ID(IEN(ee,aa),i);
-            if PP > 0
-                F(PP) = F(PP) + f_ele(pp);
-                for bb = 1 : n_en
-                    qq = n_sd*(bb-1) + j;
-                    QQ = ID(IEN(ee,bb),i);
-                    if QQ > 0
-                        for j = 1 : n_sd
-                            K(PP, QQ) = K(PP, QQ) + k_ele(pp,qq);
+        for ii = 1 : n_sd
+            for aa = 1 : n_en
+                pp = n_sd * (aa - 1) + ii;
+                PP = ID(IEN(ee,aa),ii);
+                if PP > 0
+                    F(PP) = F(PP) + f_ele(pp);
+
+                    for bb = 1 : n_en
+
+                        QQ = ID(IEN(ee,bb),ii);
+                        if QQ > 0
+                            for jj = 1 : n_sd
+                                qq = n_sd*(bb-1) + jj;
+                                K(PP, QQ) = K(PP, QQ) + k_ele(pp,qq);
+                            end
+                        else
+                            % modify F with the boundary data
+                            % here we do nothing because the boundary data g is zero or
+                            % homogeneous
                         end
-                    else
-                        % modify F with the boundary data
-                        % here we do nothing because the boundary data g is zero or
-                        % homogeneous
                     end
                 end
             end
         end
-    end
+     end
 end
-
 
 % solve the stiffness matrix
 dn = K \ F;
