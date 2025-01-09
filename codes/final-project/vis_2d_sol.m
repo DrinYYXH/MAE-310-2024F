@@ -24,6 +24,18 @@ hx = mesh.hx;
 hy = mesh.hy;
 
 
+% generate the nodal coordinates
+X_coor = zeros(n_np, 1);
+Y_coor = x_coor;
+
+for ny = 1 : n_np_y
+  for nx = 1 : n_np_x
+    index = (ny-1)*n_np_x + nx; % nodal index
+    X_coor(index) = (nx-1) * hx;
+    Y_coor(index) = (ny-1) * hy;
+  end
+end
+
 load("U.mat");  % 加载 displacement 数据，假设文件中包含 displacement 变量
 
 
@@ -52,21 +64,26 @@ hold on;
 % 绘制数值解变形后的节点
 plot(x_num, y_num, 'ko', 'MarkerFaceColor', 'r','MarkerSize',5);  % 红色的变形后节点
 
-% 绘制数值解变形后的网格线
-for ny = 1 : n_np_y
-    plot( x_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b');
-end
-for nx = 1 : n_np_x
-    plot( x_num(nx : n_np_x : end , 1) , y_num( nx : n_np_x : end , 1) , 'b');
+% % 绘制数值解变形后的网格线
+% for ny = 1 : n_np_y
+%     plot( x_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_num( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b');
+% end
+% for nx = 1 : n_np_x
+%     plot( x_num(nx : n_np_x : end , 1) , y_num( nx : n_np_x : end , 1) , 'b');
+% end
+
+quadshape = [1:n_en,1];
+for ee = 1 : n_el 
+        plot( x_num(IEN(ee,quadshape)) , y_num(IEN(ee,quadshape)) , 'b');
 end
 
 
 % 原始网格（绘制四条边框）
 for ny = 1 : n_np_y
-    plot( x_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--');
+    plot( X_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , Y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--');
 end
 for nx = 1 : n_np_x
-    plot( x_coor(nx : n_np_x : end , 1) , y_coor( nx : n_np_x : end , 1) , 'k--');
+    plot( X_coor(nx : n_np_x : end , 1) , Y_coor( nx : n_np_x : end , 1) , 'k--');
 end
 
 % 设置图形
@@ -103,20 +120,25 @@ hold on;
 % 绘制理论解变形后的节点
 plot(x_ext, y_ext, 'ko', 'MarkerFaceColor', 'r','MarkerSize',5);  % 红色的变形后节点
 
-% 绘制理论解变形后的网格线
-for ny = 1 : n_np_y
-    plot( x_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b');
-end
-for nx = 1 : n_np_x
-    plot( x_ext(nx : n_np_x : end , 1) , y_ext( nx : n_np_x : end , 1) , 'b');
+% % 绘制理论解变形后的网格线
+% for ny = 1 : n_np_y
+%     plot( x_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_ext( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'b');
+% end
+% for nx = 1 : n_np_x
+%     plot( x_ext(nx : n_np_x : end , 1) , y_ext( nx : n_np_x : end , 1) , 'b');
+% end
+
+quadshape = [1:n_en,1];
+for ee = 1 : n_el 
+        plot( x_ext(IEN(ee,quadshape)) , y_ext(IEN(ee,quadshape)) , 'b');
 end
 
 % 原始网格（绘制四条边框）
 for ny = 1 : n_np_y
-    plot( x_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--');
+    plot( X_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , Y_coor( (ny - 1)*n_np_x + 1 : ny*n_np_x , 1) , 'k--');
 end
 for nx = 1 : n_np_x
-    plot( x_coor(nx : n_np_x : end , 1) , y_coor( nx : n_np_x : end , 1) , 'k--');
+    plot( X_coor(nx : n_np_x : end , 1) , Y_coor( nx : n_np_x : end , 1) , 'k--');
 end
 
 % 设置图形

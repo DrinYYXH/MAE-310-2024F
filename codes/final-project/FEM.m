@@ -111,7 +111,6 @@ end
 
 % solve the stiffness matrix
 dn = K \ F;
-disp(K)
 
 
 % insert dn back into the vector for all nodes
