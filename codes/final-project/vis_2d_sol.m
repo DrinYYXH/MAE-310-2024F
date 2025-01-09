@@ -40,8 +40,17 @@ load("U.mat");  % 加载 displacement 数据，假设文件中包含 displacemen
 
 
 % 从 displacement 中提取位移数据
-u_x_num = displacement(:, 1);  % x 方向的位移
-u_y_num = displacement(:, 2);  % y 方向的位移
+% u_x_num = displacement(:, 1);  % x 方向的位移
+% u_y_num = displacement(:, 2);  % y 方向的位移
+
+u_x_num = zeros(n_np,1);
+u_y_num = zeros(n_np,1);
+for ee = 1 : n_el
+    for aa = 1 : n_en
+        u_x_num(IEN(ee,aa)) = displacement(IEN(ee,aa),1);
+        u_y_num(IEN(ee,aa)) = displacement(IEN(ee,aa),2);
+    end
+end
 
 % % 将数值解位移应用到原始网格节点
 % x_num = x_coor + u_x_num;

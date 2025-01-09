@@ -1,7 +1,7 @@
 clear;
 clc;
  
-%% User-defined Parts
+% User-defined Parts
 D_defined = 2;  % define the asumption for two-dimentional analysis plane stain(1) or plane stress(2)
 
 
@@ -11,7 +11,7 @@ D_defined = 2;  % define the asumption for two-dimentional analysis plane stain(
 
 
 
-%% auto-going
+% auto-going
 
 % define Const.
 E      = 1e9;
@@ -35,8 +35,8 @@ end
 
 
 n_en   = 4;
-n_el_x = 4;
-n_el_y = 4;
+n_el_x = 10;
+n_el_y = 10;
 n_sd   = 2;
 
 

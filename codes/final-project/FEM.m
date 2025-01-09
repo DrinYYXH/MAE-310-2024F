@@ -77,7 +77,7 @@ for ee = 1 : n_el
                            0    , Nb_y;
                            Nb_y , Nb_x];
                     for j = 1 : n_sd
-                    k_ele(n_sd * (aa - 1) + i, n_sd * (bb - 1) + j) = k_ele(n_sd * (aa - 1) + i,n_sd * (bb - 1) + j) + weight(ll) * detJ * e{i}' * B_a' * D * B_b * e{j};
+                    k_ele(n_sd*(aa-1) + i, n_sd*(bb-1) + j) = k_ele(n_sd*(aa-1) + i,n_sd*(bb-1) + j) + weight(ll) * detJ * e{i}' * B_a' * D * B_b * e{j};
                     end % end of j loop
                 end % end of bb loop
             end % end of aa loop
@@ -95,7 +95,7 @@ for ee = 1 : n_el
                     QQ = ID(IEN(ee,bb),i);
                     if QQ > 0
                         for j = 1 : n_sd
-                            K(PP, QQ) = K(PP, QQ) + k_ele(n_sd * (aa - 1) + i, n_sd * (bb - 1) + j);
+                            K(PP, QQ) = K(PP, QQ) + k_ele(n_sd*(aa-1) + i, n_sd*(bb-1) + j);
                         end
                     else
                         % modify F with the boundary data
