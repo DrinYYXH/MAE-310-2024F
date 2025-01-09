@@ -35,8 +35,8 @@ end
 
 
 n_en   = 4;
-n_el_x = 10;
-n_el_y = 10;
+n_el_x = 2;
+n_el_y = 2;
 n_sd   = 2;
 
 
@@ -44,6 +44,7 @@ n_sd   = 2;
 f = @(x,y,i) (i == 1) * ((E*(nu - 4*x - 6*y - 2*nu*y + 4*x*y - 2*nu*x^2 + 2*x^2 + 4*y^2 + 4*nu*x*y + 1))/(2*(nu^2 - 1)) ) + ...
              (i == 2) * ((E*(nu - 4*x - 6*y - 2*nu*y + 4*x*y - 2*nu*x^2 + 2*x^2 + 4*y^2 + 4*nu*x*y + 1))/(2*(nu^2 - 1)) );
 
+g = @(x,y,i) 0;
 
 % exact solution
 exact    = @(x,y,i) (i == 1) * (x*(1-x)*y*(1-y)) + (i == 2) * (x*(1-x)*y*(1-y));
@@ -73,7 +74,7 @@ n_int     = n_int_xi * n_int_eta;
 [xi, eta, weight] = Gauss2D(n_int_xi, n_int_eta);
 
 
-displacement = FEM(mesh,n_int,weight,xi,eta,f,D);
+displacement = FEM(mesh,n_int,weight,xi,eta,f,D,g);
 
 
 [e0,e1] = Error(mesh,displacement,n_int,weight,xi,eta,u);

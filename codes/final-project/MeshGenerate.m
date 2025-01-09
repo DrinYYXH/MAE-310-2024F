@@ -34,13 +34,15 @@ for ee = 1 : n_el
     end
 end
 
+BC = [1, 2, 3, 4;
+      1, 2, 3, 4];
 
 % ID array
 ID = zeros(n_np,n_sd);
 
 ID_abandon = zeros(n_np,n_sd);
-Dirichlet_BC = [1, 2, 3, 4;
-                1, 2, 3, 4];
+Dirichlet_BC = [1, 0, 0, 0;
+                0, 0, 0, 4];
 for i = 1 : length(lines)
     for j = 1 : n_sd
     is_present = ismember(lines(i,3),Dirichlet_BC(j,:));
@@ -150,6 +152,22 @@ mesh.ID_abandon = ID_abandon;
 % 
 % n_eq = counter;
 
+
+
+
+% IDH for Neumann B.C.
+Neumann_BC = BC - Dirichlet_BC;
+IDH = zeros(n_np,n_sd);
+for i = 1 : length(lines)
+    for j = 1 : n_sd
+    is_present = ismember(lines(i,3),Neumann_BC(j,:));
+        if is_present
+            IDH(lines(i,1),j) = 1;
+        end
+    end
+end
+
+mesh.IDH  = IDH;
 
 LM = ID(IEN);
 

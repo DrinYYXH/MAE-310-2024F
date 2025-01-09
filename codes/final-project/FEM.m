@@ -1,9 +1,12 @@
-function displacement = FEM(mesh,n_int,weight,xi,eta,f,D)
+function displacement = FEM(mesh,n_int,weight,xi,eta,f,D,g)
 
 %unpack mesh
 IEN = mesh.IEN;
 ID  = mesh.ID;
 LM  = mesh.LM;
+
+IDH        = mesh.IDH;
+ID_abandon = mesh.ID_abandon;
 
 n_en   = mesh.n_en;
 n_el   = mesh.n_el;
@@ -37,6 +40,8 @@ for ee = 1 : n_el
     
     k_ele = zeros(n_ee, n_ee); % element stiffness matrix
     f_ele = zeros(n_ee, 1);    % element load vector
+    f_g   = zeros(n_ee, 1);    % Dirichlet B.C.
+    f_h   = zeros(n_ee, 1);    % Neumann B.C.
     
      for ll = 1 : n_int
             x_l = 0.0; y_l = 0.0;
@@ -65,7 +70,6 @@ for ee = 1 : n_el
                        0    , Na_y;
                        Na_y , Na_x];
             for i = 1 : n_sd
-                f_ele(n_sd * (aa - 1) + i) = f_ele(n_sd * (aa - 1) + i) + weight(ll) * detJ * f(x_l, y_l, i) * Na;
                 
                 for bb = 1 : n_en
                     Nb = Quad(bb, xi(ll), eta(ll));
@@ -77,25 +81,41 @@ for ee = 1 : n_el
                            0    , Nb_y;
                            Nb_y , Nb_x];
                     for j = 1 : n_sd
-                    k_ele(n_sd*(aa-1) + i, n_sd*(bb-1) + j) = k_ele(n_sd*(aa-1) + i,n_sd*(bb-1) + j) + weight(ll) * detJ * e{i}' * B_a' * D * B_b * e{j};
+                        pp = n_sd*(aa-1) + i;
+                        qq = n_sd*(bb-1) + j;
+                        k_ele(pp,qq) = k_ele(pp,qq) + weight(ll) * detJ * e{i}' * B_a' * D * B_b * e{j};
+
+                    if ID_abandon(IEN(aa,ee),i) > 0
+                        f_g(qq)   = k_ele(pp,qq) * g(x_l, y_l, i);
+                        f_ele(pp) = f_ele(pp) - f_g(qq);
+                    end
+
                     end % end of j loop
                 end % end of bb loop
-            end % end of aa loop
-        end % end of quadrature loop
+
+                f_ele(pp) = f_ele(pp) + weight(ll) * detJ * f(x_l, y_l, i) * Na;
+
+                    if IDH(IEN(aa,ee),i) > 0
+                        f_ele(pp) = f_ele(pp) + Na * weight(ll) * detJ * h(x_l, y_l, i);
+                    end
+
+            end % end of i loop
+        end % end of aa loop
      end
 
 
     for i = 1 : n_sd
         for aa = 1 : n_en
+            pp = n_sd * (aa - 1) + i;
             PP = ID(IEN(ee,aa),i);
             if PP > 0
-                F(PP) = F(PP) + f_ele(n_sd * (aa - 1) + i);
-
+                F(PP) = F(PP) + f_ele(pp);
                 for bb = 1 : n_en
+                    qq = n_sd*(bb-1) + j;
                     QQ = ID(IEN(ee,bb),i);
                     if QQ > 0
                         for j = 1 : n_sd
-                            K(PP, QQ) = K(PP, QQ) + k_ele(n_sd*(aa-1) + i, n_sd*(bb-1) + j);
+                            K(PP, QQ) = K(PP, QQ) + k_ele(pp,qq);
                         end
                     else
                         % modify F with the boundary data

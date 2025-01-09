@@ -7,7 +7,7 @@ fid = fopen(geo_file, 'w');
 % 编写几何内容
 fprintf(fid, '// 定义几何体：一个矩形区域\n');
 fprintf(fid, '\n');
-fprintf(fid, 'dx=0.1;\n');
+fprintf(fid, 'dx=0.5;\n');
 fprintf(fid, 'Point(1) = {0, 0, 0, dx}; // 点1\n');
 fprintf(fid, 'Point(2) = {1, 0, 0, dx}; // 点2\n');
 fprintf(fid, 'Point(3) = {1, 1, 0, dx}; // 点3\n');
