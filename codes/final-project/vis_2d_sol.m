@@ -31,9 +31,19 @@ load("U.mat");  % 加载 displacement 数据，假设文件中包含 displacemen
 u_x_num = displacement(:, 1);  % x 方向的位移
 u_y_num = displacement(:, 2);  % y 方向的位移
 
-% 将数值解位移应用到原始网格节点
-x_num = x_coor + u_x_num;
-y_num = y_coor + u_y_num;
+% % 将数值解位移应用到原始网格节点
+% x_num = x_coor + u_x_num;
+% y_num = y_coor + u_y_num;
+
+x_num = zeros(n_np,1);
+y_num = zeros(n_np,1);
+
+for ee = 1 : n_el
+    for aa = 1 : n_en
+        x_num(IEN(ee,aa)) = x_coor(IEN(ee,aa)) + u_x_num(IEN(ee,aa));
+        y_num(IEN(ee,aa)) = y_coor(IEN(ee,aa)) + u_y_num(IEN(ee,aa));
+    end
+end
 
 % 绘制数值解变形后的网格
 figure(1);
@@ -49,6 +59,7 @@ end
 for nx = 1 : n_np_x
     plot( x_num(nx : n_np_x : end , 1) , y_num( nx : n_np_x : end , 1) , 'b');
 end
+
 
 % 原始网格（绘制四条边框）
 for ny = 1 : n_np_y

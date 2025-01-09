@@ -35,8 +35,8 @@ end
 
 
 n_en   = 4;
-n_el_x = 20;
-n_el_y = 20;
+n_el_x = 4;
+n_el_y = 4;
 n_sd   = 2;
 
 

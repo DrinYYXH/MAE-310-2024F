@@ -38,7 +38,7 @@ for ee = 1 : n_el
     k_ele = zeros(n_ee, n_ee); % element stiffness matrix
     f_ele = zeros(n_ee, 1);    % element load vector
     
-        for ll = 1 : n_int
+     for ll = 1 : n_int
             x_l = 0.0; y_l = 0.0;
             dx_dxi = 0.0; dx_deta = 0.0;
             dy_dxi = 0.0; dy_deta = 0.0;
@@ -55,7 +55,7 @@ for ee = 1 : n_el
 
             detJ = dx_dxi * dy_deta - dx_deta * dy_dxi;
 
-            for aa = 1 : n_en
+          for aa = 1 : n_en
                 Na = Quad(aa, xi(ll), eta(ll));
                 [Na_xi, Na_eta] = Quad_grad(aa, xi(ll), eta(ll));
                 Na_x = (Na_xi * dy_deta - Na_eta * dy_dxi) / detJ;
@@ -82,7 +82,9 @@ for ee = 1 : n_el
                 end % end of bb loop
             end % end of aa loop
         end % end of quadrature loop
-    end
+     end
+
+
     for i = 1 : n_sd
         for aa = 1 : n_en
             PP = ID(IEN(ee,aa),i);
@@ -109,6 +111,7 @@ end
 
 % solve the stiffness matrix
 dn = K \ F;
+disp(K)
 
 
 % insert dn back into the vector for all nodes
