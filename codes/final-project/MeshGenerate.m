@@ -12,11 +12,22 @@ n_el_x = n_np^(1/2) - 1;
 n_el_y = n_np^(1/2) - 1;
 n_el   = n_el_x * n_el_y;
 
-% n_el   = n_el_x * n_el_y;
+
+% %total number of elements
+% if n_en == 3
+%     n_el   = n_el_x * n_el_y * 2; 
+%  elseif n_en == 4
+%     n_el   = n_el_x * n_el_y;
+% else
+%     error('Error: value of a should be 3 or 4.');
+% end  
 % 
+n_el   = n_el_x * n_el_y;
+
 n_np_x = n_el_x + 1;      % number of nodal points in x-dir
 n_np_y = n_el_y + 1;      % number of nodal points in y-dir
-% n_np   = n_np_x * n_np_y; % total number of nodal points
+n_np   = n_np_x * n_np_y; % total number of nodal points
+
 
 x_coor = zeros(n_np, 1);
 y_coor = x_coor;
@@ -56,6 +67,9 @@ for i = 1 : length(lines)
     end
 end
 
+mesh.ID_abandon = ID_abandon;
+
+
 counter = 0;
 for i = 1 : n_np
     for j = 1 : n_sd
@@ -78,24 +92,14 @@ for ee = 1 : n_el
 end
 
 
-mesh.ID_abandon = ID_abandon;
 
 
 
 
-% % total number of elements
-% if n_en == 3
-%     n_el   = n_el_x * n_el_y * 2; 
-%  elseif n_en == 4
-%     n_el   = n_el_x * n_el_y;
-% else
-%     error('Error: value of a should be 3 or 4.');
-% end     
-% 
-% n_np_x = n_el_x + 1;      % number of nodal points in x-dir
-% n_np_y = n_el_y + 1;      % number of nodal points in y-dir
-% n_np   = n_np_x * n_np_y; % total number of nodal points
-% 
+
+   
+
+
 % x_coor = zeros(n_np, 1);
 % y_coor = x_coor;
 % 
@@ -162,14 +166,14 @@ mesh.ID_abandon = ID_abandon;
 % IDH for Neumann B.C.
 Neumann_BC = BC - Dirichlet_BC;
 IDH = zeros(n_np,n_sd);
-for i = 1 : length(lines)
-    for j = 1 : n_sd
-    is_present = ismember(lines(i,3),Neumann_BC(j,:));
-        if is_present
-            IDH(lines(i,1),j) = 1;
-        end
-    end
-end
+% for i = 1 : length(lines)
+%     for j = 1 : n_sd
+%     is_present = ismember(lines(i,3),Neumann_BC(j,:));
+%         if is_present
+%             IDH(lines(i,1),j) = 1;
+%         end
+%     end
+% end
 
 mesh.IDH  = IDH;
 
