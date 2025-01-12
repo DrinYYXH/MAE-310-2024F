@@ -2,6 +2,8 @@ function mesh = Mesh4hole(n_en,n_sd)
 %MESHGENERATE 此处显示有关此函数的摘要
 %   此处显示详细说明
 
+addpath('H:\CSM\Code_HW\MAE-310-2024F\codes\final-project');
+
 %% data input
 % gmesh progress
 % run('gmesh_output.m');

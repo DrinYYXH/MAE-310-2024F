@@ -136,18 +136,31 @@ n_int     = n_int_xi * n_int_eta;
 
 
 
-f = @(x,y,i) (i == 1) * ((E*(nu - 4*x - 6*y - 2*nu*y + 4*x*y - 2*nu*x^2 + 2*x^2 + 4*y^2 + 4*nu*x*y + 1))/(2*(nu^2 - 1)) ) + ...
-             (i == 2) * ((E*(nu - 4*x - 6*y - 2*nu*y + 4*x*y - 2*nu*x^2 + 2*x^2 + 4*y^2 + 4*nu*x*y + 1))/(2*(nu^2 - 1)) );
+% f = @(x,y,i) (i == 1) * ((E*(nu - 4*x - 6*y - 2*nu*y + 4*x*y - 2*nu*x^2 + 2*x^2 + 4*y^2 + 4*nu*x*y + 1))/(2*(nu^2 - 1)) ) + ...
+%              (i == 2) * ((E*(nu - 4*x - 6*y - 2*nu*y + 4*x*y - 2*nu*x^2 + 2*x^2 + 4*y^2 + 4*nu*x*y + 1))/(2*(nu^2 - 1)) );
+% 
+% 
+% % exact solution
+% exact    = @(x,y,i) (i == 1) * (x*(1-x)*y*(1-y)) + (i == 2) * (x*(1-x)*y*(1-y));
+% exact_x  = @(x,y,i) (i == 1) * (1-2*x)*y*(1-y)   + (i == 2) * (1-2*x)*y*(1-y);
+% exact_y  = @(x,y,i) (i == 1) * x*(1-x)*(1-2*y)   + (i == 2) * x*(1-x)*(1-2*y);
+% exact_xx = @(x,y,i) (i == 1) * -2*y*(1-y)        + (i == 2) * -2*y*(1-y);
+% exact_yy = @(x,y,i) (i == 1) * -2*x*(1-x)        + (i == 2) * -2*x*(1-x);
+% exact_xy = @(x,y,i) (i == 1) * (1-2*x)*(1-2*y)   + (i == 2) * (1-2*x)*(1-2*y);
+% exact_yx = @(x,y,i) (i == 1) * (1-2*x)*(1-2*y)   + (i == 2) * (1-2*x)*(1-2*y);
 
+f = @(x,y,i) (i == 1) * ((2*E*y*(y - 1))/(nu^2 - 1) - (2*E*x*(nu/2 - 1/2)*(x - 1))/(nu^2 - 1) ) + ...
+             (i == 2) * ((E*(2*x - 1)*(2*y - 1))/(2*(nu - 1)) );
 
 % exact solution
-exact    = @(x,y,i) (i == 1) * (x*(1-x)*y*(1-y)) + (i == 2) * (x*(1-x)*y*(1-y));
-exact_x  = @(x,y,i) (i == 1) * (1-2*x)*y*(1-y)   + (i == 2) * (1-2*x)*y*(1-y);
-exact_y  = @(x,y,i) (i == 1) * x*(1-x)*(1-2*y)   + (i == 2) * x*(1-x)*(1-2*y);
-exact_xx = @(x,y,i) (i == 1) * -2*y*(1-y)        + (i == 2) * -2*y*(1-y);
-exact_yy = @(x,y,i) (i == 1) * -2*x*(1-x)        + (i == 2) * -2*x*(1-x);
-exact_xy = @(x,y,i) (i == 1) * (1-2*x)*(1-2*y)   + (i == 2) * (1-2*x)*(1-2*y);
-exact_yx = @(x,y,i) (i == 1) * (1-2*x)*(1-2*y)   + (i == 2) * (1-2*x)*(1-2*y);
+exact    = @(x,y,i) (i == 1) * (x*(1-x)*y*(1-y)) + (i == 2) * 0;
+exact_x  = @(x,y,i) (i == 1) * (1-2*x)*y*(1-y)   + (i == 2) * 0;
+exact_y  = @(x,y,i) (i == 1) * x*(1-x)*(1-2*y)   + (i == 2) * 0;
+exact_xx = @(x,y,i) (i == 1) * -2*y*(1-y)        + (i == 2) * 0;
+exact_yy = @(x,y,i) (i == 1) * -2*x*(1-x)        + (i == 2) * 0;
+exact_xy = @(x,y,i) (i == 1) * (1-2*x)*(1-2*y)   + (i == 2) * 0;
+exact_yx = @(x,y,i) (i == 1) * (1-2*x)*(1-2*y)   + (i == 2) * 0;
+
 
 u.exact    = exact;
 u.exact_x  = exact_x;
@@ -175,7 +188,6 @@ for i = 1 : length(n_ele)
     %unpack mesh
     IEN = mesh.IEN;
     ID  = mesh.ID;
-    LM  = mesh.LM;
     
     n_en   = mesh.n_en;
     n_el   = mesh.n_el;

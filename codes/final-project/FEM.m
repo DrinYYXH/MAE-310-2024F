@@ -3,7 +3,6 @@ function displacement = FEM(mesh,n_int,weight,xi,eta,f,D,g,h)
 %unpack mesh
 IEN = mesh.IEN;
 ID  = mesh.ID;
-LM  = mesh.LM;
 
 IDH        = mesh.IDH;
 ID_abandon = mesh.ID_abandon;

@@ -1,6 +1,8 @@
 clear;
 clc;
  
+addpath('H:\CSM\Code_HW\MAE-310-2024F\codes\final-project');
+
 % User-defined Parts
 D_defined = 2;  % define the asumption for two-dimentional analysis plane stain(1) or plane stress(2)
 

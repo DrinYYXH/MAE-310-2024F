@@ -3,7 +3,6 @@ function [e0,e1] = Error(mesh,displacement,n_int,weight,xi,eta,u)
 %unpack mesh
 IEN = mesh.IEN;
 ID  = mesh.ID;
-LM  = mesh.LM;
 
 IDH        = mesh.IDH;
 ID_abandon = mesh.ID_abandon;
@@ -36,15 +35,18 @@ exact_xy = u.exact_xy;
 exact_yx = u.exact_yx;
 
 
-error_Sn0 = [0,0];
-error_Sn1 = [0,0];
-exact_Sn2 = [0,0];
+
+Error_Sn0 = 0;
+Error_Sn1 = 0;
+Exact_Sn2 = 0;
 
 
 for ee = 1 : n_el
     x_ele   = x_coor( IEN(ee, 1:n_en) );
     y_ele   = y_coor( IEN(ee, 1:n_en) );
-
+    error_Sn0 = [0,0];
+    error_Sn1 = [0,0];
+    exact_Sn2 = [0,0];
 
     for ll = 1 : n_int
 
@@ -52,9 +54,7 @@ for ee = 1 : n_el
             y_l     = 0.0;
             dx_dxi  = 0.0; dx_deta = 0.0;
             dy_dxi  = 0.0; dy_deta = 0.0;
-            u_h     = 0;
-            u_h_x   = 0;
-            u_h_y   = 0;
+
 
             for aa = 1 : n_en
                 x_l = x_l + x_ele(aa) * Quad(aa, xi(ll), eta(ll));
@@ -70,6 +70,9 @@ for ee = 1 : n_el
             detJ = dx_dxi * dy_deta - dx_deta * dy_dxi;
         
          for i = 1 : n_sd  
+             u_h     = 0;
+             u_h_x   = 0;
+             u_h_y   = 0;
             for aa = 1 : n_en
     
                 [Na_xi, Na_eta] = Quad_grad(aa, xi(ll), eta(ll));
@@ -98,16 +101,23 @@ for ee = 1 : n_el
             
         end
     end
+    disp(error_Sn0);
+    disp(error_Sn1);
+    disp(exact_Sn2);
+
+    Error_Sn0 = Error_Sn0 + sum(error_Sn0);
+    Error_Sn1 = Error_Sn1 + sum(error_Sn1);
+    Exact_Sn2 = Exact_Sn2 + sum(exact_Sn2);
+
 end
   
 
+Error_Sn0 = sqrt(Error_Sn0);
+Error_Sn1 = sqrt(Error_Sn1);
+Exact_Sn2 = sqrt(Exact_Sn2);
 
-error_Sn0 = sqrt(sum(error_Sn0));
-error_Sn1 = sqrt(sum(error_Sn1));
-exact_Sn2 = sqrt(sum(exact_Sn2));
-
-e0 = error_Sn0/exact_Sn2;
-e1 = error_Sn1/exact_Sn2;
+e0 = Error_Sn0/Exact_Sn2;
+e1 = Error_Sn1/Exact_Sn2;
 
 
 

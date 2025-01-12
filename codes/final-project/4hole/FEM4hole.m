@@ -1,5 +1,7 @@
 function displacement = FEM4hole(mesh,n_int,weight,xi,eta,f,D,g,h)
 
+addpath('H:\CSM\Code_HW\MAE-310-2024F\codes\final-project');
+
 %unpack mesh
 IEN = mesh.IEN;
 ID  = mesh.ID;
